@@ -3,7 +3,7 @@
 #include "dialogue.h"
 #include "choice.h"
 
-#define CAPACITY 1000
+#define SCENES_MAX 1000
 
 typedef struct Scene {
 	Dialogue* dialogues;
@@ -11,12 +11,14 @@ typedef struct Scene {
 } Scene;
 
 typedef struct VisualNovel {
-	Scene scenes[CAPACITY];
+	Scene scenes[SCENES_MAX];
+	Flag* flags;
 } VisualNovel;
 
-void addDialogue(VisualNovel* vn, int sceneId, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
-void addChoice(VisualNovel* vn, int sceneId, char text[CHOICE_SIZE], int destId);
-Scene showChoices(Scene scene);
-bool endOfScene(Scene scene);
+Dialogue* addDialogue(VisualNovel* vn, int sceneId, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
+Choice* addChoice(VisualNovel* vn, int sceneId, char text[CHOICE_SIZE], int destId);
+Scene choose(Scene scene, Flag** flags);
+bool isEndingScene(Scene scene);
 void freeScene(Scene* scene);
+void startVisualNovel(VisualNovel* vn);
 void freeVisualNovel(VisualNovel* vn);
