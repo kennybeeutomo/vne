@@ -1,0 +1,143 @@
+scene 0
+dialogue "-" "Q1 of 4
+2+2=?"
+choice "2" 1 set "badmath"
+choice "4" 2
+choice "5" 1 set "badmath"
+choice "8" 1 set "badmath"
+
+scene 1
+dialogue "-" "That response is incorrect. Press any key to try again."
+dialogue "-" "Q1 of 4
+3+2=?"
+choice "2" 1
+choice "4" 1
+choice "5" 2
+choice "8" 1
+choice "give up" 999
+
+scene 2
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q2 of 4
+What is your subjective reaction to this image?
+
+^_^
+
+ANSWER:"
+choice "Content" 3
+choice "Mountain" 3 set "objective"
+choice "Face" 3 set "objective"
+choice "Angry" 3
+
+scene 3
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q3 of 4
+What best describes a person?
+
+ANSWER:"
+choice "A human being" 4 set "humanbeing"
+choice "A citizen" 4 set "citizen"
+choice "A being of negative entropy" 4 set "negativeentropy"
+choice "A rational animal" 4 set "rationalanimal"
+choice "A problem solving system" 4 set "problemsolving"
+
+scene 4
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q4 of 4
+You're walking through the desert and come across a thirsty traveller. His eyes bulge from slow dehydration. You have water, but you're not sure how far it is to the next oasis. What do you do?
+
+ANSWER: "
+choice "Offer half the water" 5
+choice "Offer all the water" 5
+choice "Ignore him" 5
+choice "Ask what you're doing in the desert" 5
+choice "Kill him and collect his blood in a flask for later" 5 set "sociopath"
+
+scene 5
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Part 1 of the certification process is now complete."
+dialogue "-" "Part 2 is designed to test the consistency of some of your outlier responses in the previous round. You will be presented with a series of statements. Please indicate your agreement where appropriate."
+
+dialogue "-" "Q1 of 6
+Since all human beings are persons, and some human beings have psychological capacities similar to animals, some animals are therefore persons.
+
+ANSWER: " require "humanbeing"
+choice "Broadly agree" 6 require "humanbeing" set "animalsarepersons"
+choice "Broadly disagree" 6 require "humanbeing" set "persondenial"
+
+dialogue "-" "Q1 of 6
+Since only citizens can be persons, a hermit cannot be a person.
+
+ANSWER:" require "citizen"
+choice "Broadly agree" 6 require "citizen"
+choice "Broadly disagree" 6 require "citizen" set "persondenial"
+
+dialogue "-" "Q1 of 6
+Since negative entropy indicates personhood, microscopic organisms are also persons.
+
+ANSWER:" require "negativeentropy"
+choice "Broadly agree" 6 require "negativeentropy"
+choice "Broadly disagree" 6 require "negativeentropy" set "persondenial"
+
+dialogue "-" "Q1 of 6
+Since only animals can be persons, a machine could never be a person.
+
+ANSWER:" require "rationalanimal"
+choice "Broadly agree" 6 require "rationalanimal"
+choice "Broadly disagree" 6 require "rationalanimal" set "persondenial"
+
+dialogue "-" "Q1 of 6
+Since a person is merely a problem solving system, we could in principle build a person out of bits of string and tin cans.
+
+ANSWER:" require "problemsolving"
+choice "Broadly agree" 6 require "problemsolving"
+choice "Broadly disagree" 6 require "problemsolving" set "persondenial"
+
+scene 6
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q2 of 6
+A person is under no authority other than that to which they consent.
+
+ANSWER:"
+choice "Broadly agree" 7 set "nomorals"
+choice "Broadly disagree" 7
+
+scene 7
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q3 of 6
+The quality of life of persons ought be maximised.
+
+ANSWER:"
+choice "Broadly agree" 8 set "utilitarian"
+choice "Broadly disagree" 8
+
+scene 8
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q4 of 6
+Value is discovered.
+
+ANSWER:"
+choice "Broadly agree" 9 set "valuediscovered"
+choice "Broadly disagree" 9
+
+scene 9
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q5 of 6
+The liberty of persons ought be maximised.
+
+ANSWER:"
+choice "Broadly agree" 10 set "liberal"
+choice "Broadly disagree" 10
+
+scene 10
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Q6 of 6
+Value is created.
+
+ANSWER:"
+choice "Broadly agree" 11 set "valuecreated"
+choice "Broadly disagree" 11
+
+scene 11
+dialogue "-" "Your input has been accepted."
+dialogue "-" "Thank you. The certification process is now complete. You will receive a notification when your user profile has been generated."

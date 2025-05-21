@@ -1,0 +1,10 @@
+scene 0
+dialogue "-" "what's your name?"
+choice "Kenny" 1 set "kenny"
+choice "Bee" 1 set "bee"
+choice "Utomo" 1 set "utomo"
+
+scene 1
+dialogue "-" "Hello Kenny" require "kenny"
+dialogue "-" "Hello Bee" require "bee"
+dialogue "-" "Hello Utomo" require "utomo"

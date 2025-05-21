@@ -1,6 +1,7 @@
 #include "dialogue.h"
 #include "flag.h"
 #include "stdlib.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -20,7 +21,7 @@ void printDialogue(Dialogue* dialogue, Flag* flags) {
 			if (dialogue != head) {
 				getchar();
 			}
-			if (dialogue->speaker[0] != '\0') {
+			if (dialogue->speaker[0] != '-') {
 				printf("%s: ", dialogue->speaker);
 			}
 			printf("%s\n", dialogue->text);

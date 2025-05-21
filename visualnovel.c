@@ -1,9 +1,9 @@
-#include "scene.h"
+#include "visualnovel.h"
 #include "choice.h"
 #include "dialogue.h"
 #include "flag.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
 Dialogue* addDialogue(VisualNovel* vn, int sceneId, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	Dialogue* dialogue = appendDialogue(vn->scenes[sceneId].dialogues, speaker, text);

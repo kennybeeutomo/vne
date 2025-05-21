@@ -22,3 +22,4 @@ bool isEndingScene(Scene scene);
 void freeScene(Scene* scene);
 void startVisualNovel(VisualNovel* vn);
 void freeVisualNovel(VisualNovel* vn);
+void loadVisualNovel(VisualNovel* vn, const char* filename);
