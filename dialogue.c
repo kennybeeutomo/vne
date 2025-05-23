@@ -21,7 +21,7 @@ void printDialogue(Dialogue* dialogue, Flag* flags) {
 			if (dialogue != head) {
 				getchar();
 			}
-			if (dialogue->speaker[0] != '-') {
+			if (dialogue->speaker[0] != '\0') {
 				printf("%s: ", dialogue->speaker);
 			}
 			printf("%s\n", dialogue->text);

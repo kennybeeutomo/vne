@@ -1,0 +1,59 @@
+scene 0
+dialogue "" "The city sleeps, but crime never does. A scream echoed through the alley. Time to investigate."
+dialogue "Detective" "Another murder. Third this week. Same M.O., same signature. This has to be the same killer."
+dialogue "Officer Lin" "We've cordoned off the scene, sir. Do you want to inspect the body or talk to the witness first?"
+
+choice "Inspect the body" 1 set "clue_bloodpattern"
+choice "Talk to the witness" 2 set "clue_witnessstatement"
+
+scene 1
+dialogue "" "The body is lying face down. Multiple stab wounds. But what's this... a strange blood pattern near the hand."
+dialogue "Detective" "Looks like a deliberate smear. A message?"
+
+dialogue "" "You return to Officer Lin."
+dialogue "Officer Lin" "Ready to talk to the witness?"
+
+choice "Talk to the witness" 2
+
+scene 2
+dialogue "Witness" "I saw someone... tall, wore a hoodie. I think they dropped something. I was too scared to move."
+dialogue "Officer Lin" "We did find a pendant near the body. Could be the victim’s or the killer’s."
+
+choice "Ask about the pendant" 3
+choice "Inspect the pendant closely" 4 set "clue_pendant"
+
+scene 3
+dialogue "Witness" "It was round, black... some kind of symbol on it. Couldn’t make it out."
+
+choice "Inspect the pendant" 4 set "clue_pendant"
+
+scene 4
+dialogue "Detective" "Hmm. This pendant... it has a crest. Looks military. Could be a unit insignia. Someone trained."
+
+dialogue "" "With enough clues, you might be able to make a deduction about the suspect."
+
+dialogue "" "Make a deduction:" require "clue_bloodpattern"
+choice "The killer left a coded message." 5 require "clue_bloodpattern" set "deduction_message"
+
+dialogue "" "Make a deduction:" require "clue_pendant"
+choice "The killer has a military background." 5 require "clue_pendant" set "deduction_military"
+
+dialogue "" "Make a deduction:" require "clue_witnessstatement"
+choice "The killer is someone known to the victim." 5 require "clue_witnessstatement" set "deduction_known"
+
+scene 5
+dialogue "" "You've reached a working theory. You call Officer Lin to discuss your findings."
+
+dialogue "Detective" "Here's what I've gathered."
+
+dialogue "Detective" "The killer left a hidden message. They're taunting us." require "deduction_message"
+dialogue "Detective" "This pendant suggests military training. They know how to cover their tracks." require "deduction_military"
+dialogue "Detective" "The killer might be someone close to the victim. The attack wasn’t random." require "deduction_known"
+
+dialogue "Officer Lin" "That's... solid reasoning. Should we brief the chief?"
+
+choice "Yes. Move forward with the case." 6
+choice "No. I need more time." 0
+
+scene 6
+dialogue "" "To be continued..."

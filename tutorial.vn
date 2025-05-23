@@ -1,0 +1,67 @@
+scene 0
+dialogue "" "Welcome to the Visual Novel Engine (VNE)!"
+dialogue "" "This short interactive tutorial will show you how this engine works."
+
+dialogue "" "Let's start with a simple question."
+
+dialogue "" "What would you like to do?"
+
+choice "Learn about dialogue" 1
+choice "Learn about choices" 2
+choice "Learn about flags" 3
+choice "Skip tutorial" 9
+
+scene 1
+dialogue "" "Dialogue is the most basic element of a visual novel."
+dialogue "" "Use the command:"
+dialogue "" "dialogue \"<speaker>\" \"<text>\""
+dialogue "" "If <speaker> is \"\", aka empty string, it becomes narration."
+
+dialogue "" "Like this very message you're reading now!"
+
+choice "Back to menu" 0
+
+scene 2
+dialogue "" "Choices allow the player to influence the story."
+dialogue "" "Use the command:"
+dialogue "" "choice \"<text>\" <scene id>"
+dialogue "" "The player sees <text>, and choosing it jumps to <scene id>."
+
+dialogue "" "You're experiencing choices right now."
+
+choice "Back to menu" 0
+
+scene 3
+dialogue "" "Flags are powerful tools for branching logic."
+dialogue "" "Use:"
+dialogue "" "set \"<flag name>\" - activates a flag when a choice is made"
+dialogue "" "require \"<flag name>\" - shows dialogue or choice only if flag is set"
+
+dialogue "" "Try picking a suspicious answer below."
+
+choice "I understand flags!" 4 set "understandsflags"
+choice "I don't get it..." 4
+
+scene 4
+dialogue "" "Great, let's test if you understood flags."
+
+dialogue "" "If you chose the right answer, you'll see a secret message!"
+
+dialogue "" "Checking flag..." require "understandsflags"
+dialogue "" "You got the flag! That's how conditional content works." require "understandsflags"
+
+choice "Back to menu" 0
+
+scene 9
+dialogue "" "You’ve reached the end of the tutorial."
+
+dialogue "" "To run your own visual novel script, use the terminal:"
+dialogue "" "`vne <path to script file>`"
+dialogue "" "For example:"
+dialogue "" "`vne mystery.vn`"
+
+dialogue "" "Your script should follow the same format you've seen here."
+
+dialogue "" "Thank you for trying out the Visual Novel Engine. Have fun creating stories!"
+
+dialogue "" "Exiting..."
