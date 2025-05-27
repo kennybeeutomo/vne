@@ -1,8 +1,7 @@
 #pragma once
 
 #include "flag.h"
-#define TEXT_SIZE 1000
-#define SPEAKER_SIZE 20
+#include "config.h"
 
 typedef struct Dialogue Dialogue;
 typedef struct Dialogue {

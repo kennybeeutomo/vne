@@ -2,8 +2,7 @@
 
 #include "flag.h"
 #include <stdbool.h>
-
-#define CHOICE_SIZE 200
+#include "config.h"
 
 typedef struct Scene Scene;
 

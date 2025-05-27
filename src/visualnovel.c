@@ -69,4 +69,5 @@ void freeVisualNovel(VisualNovel* vn) {
 	for (int i = 0; i < SCENES_MAX; ++i) {
 		freeScene(&vn->scenes[i]);
 	}
+	vn->flags = freeFlags(vn->flags);
 }

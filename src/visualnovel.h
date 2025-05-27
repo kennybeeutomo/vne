@@ -2,8 +2,7 @@
 
 #include "dialogue.h"
 #include "choice.h"
-
-#define SCENES_MAX 1000
+#include "config.h"
 
 typedef struct Scene {
 	Dialogue* dialogues;

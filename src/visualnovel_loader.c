@@ -1,6 +1,5 @@
 #include "choice.h"
 #include "dialogue.h"
-#include "flag.h"
 #include "visualnovel.h"
 
 #include <ctype.h>
@@ -70,6 +69,8 @@ void loadVisualNovel(VisualNovel* vn, const char* filename) {
 	if (file == NULL) {
 		error(file, "Invalid file name");
 	}
+
+	freeVisualNovel(vn);
 
 	int sceneId = 0;
 	Dialogue* dialogue;

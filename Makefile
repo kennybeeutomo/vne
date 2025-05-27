@@ -2,11 +2,14 @@ NAME = vne
 EXE = $(NAME)
 TARGET = ./$(EXE)
 
+CFILES = $(wildcard src/*.c)
+OBJECTS = $(CFILES:.c=.o)
+
 DEBUG = on
 
 CC = gcc
 CFLAGS = -Wall -std=c99
-LDLIBS = 
+LDLIBS =
 
 ifeq ($(DEBUG),on)
 	CFLAGS += -g3 -O0
@@ -14,43 +17,29 @@ else
 	CFLAGS += -O2
 endif
 
-CFILES = $(wildcard *.c)
-OBJECTS = $(CFILES:.c=.o)
-
-UP = \e[1A
-CHECK = \e[92m✓\e[0m
-
 all: $(OBJECTS)
-	@echo "[   ] Linking $^"
-	@$(CC) $(CFLAGS) $^ -o $(TARGET) $(LDLIBS)
-	@echo -e "$(UP)[ $(CHECK) ] Linking $^"
+	$(CC) $(CFLAGS) $^ -o $(TARGET) $(LDLIBS)
 
-%.o: %.c %.h
-	@echo "[   ] Compiling $^"
-	@$(CC) $(CFLAGS) -c $<
-	@echo -e "$(UP)[ $(CHECK) ] Compiling $^"
+src/%.o: src/%.c src/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-%.o: %.c
-	@echo "[   ] Compiling $^"
-	@$(CC) $(CFLAGS) -c $<
-	@echo -e "$(UP)[ $(CHECK) ] Compiling $^"
+src/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@echo "[   ] Deleting .o files"
-	@rm *.o
-	@echo -e "$(UP)[ $(CHECK) ] Deleting .o files"
+	rm src/*.o
 
 run:
-	@$(TARGET)
+	$(TARGET)
 
 test:
-	@echo 1 | $(TARGET)
+	echo 1 | $(TARGET)
 
 debug:
-	@gdb -q $(EXE)
+	gdb -q $(TARGET)
 
 watch:
-	@fd '\.c|\.h|Makefile' | entr -cs 'make -s && make -s run'
+	fd '\.c|\.h|Makefile' | entr -cs 'make -s && make -s run'
 
 .PHONY:
 	clean run test debug watch

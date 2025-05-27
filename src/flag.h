@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
-#define FLAG_SIZE 30
+#include "config.h"
 
 typedef struct Flag Flag;
 typedef struct Flag {
