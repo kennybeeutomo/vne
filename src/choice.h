@@ -13,13 +13,20 @@ typedef struct Choice {
 	char flagToAdd[FLAG_SIZE];
 	Scene* scene;
 	Choice* next;
+	Choice* prev;
 } Choice;
 
 Choice* initChoice(char text[CHOICE_SIZE], Scene* scene);
-void printChoices(Choice* choice, Flag* flags);
+
+Choice* choiceAt(Choice* choices, Flag* flags, int i);
 Choice* tailChoice(Choice* choice);
+Choice* nextChoice(Choice* choice, Flag* flags);
+Choice* prevChoice(Choice* choice, Flag* flags);
+Choice* getFirstChoice(Choice* choices, Flag* flags);
+
 Choice* appendChoice(Choice* choice, char text[CHOICE_SIZE], Scene* scene);
-Choice* deleteChoice(Choice* choice, char text[CHOICE_SIZE]);
+Choice* deleteChoice(Choice* choices, Choice* target);
 Choice* freeChoices(Choice* choice);
+
 void requireChoiceFlag(Choice* choice, char flag[FLAG_SIZE]);
 void setFlag(Choice* choice, char flag[FLAG_SIZE]);

@@ -1,4 +1,5 @@
 #include "choice.h"
+#include "config.h"
 #include "dialogue.h"
 #include "visualnovel.h"
 
@@ -54,6 +55,9 @@ void getString(FILE* file, char* string, int n) {
 		}
 		if (c == '\\') {
 			c = fgetc(file);
+			if (c == 'n') {
+				c = '\n';
+			}
 		}
 		if (i >= n - 1) {
 			error(file, "Parsed string is too long");
@@ -63,8 +67,11 @@ void getString(FILE* file, char* string, int n) {
 	}
 }
 
-void loadVisualNovel(VisualNovel* vn, const char* filename) {
-	FILE* file = fopen(filename, "r");
+void loadVisualNovel(VisualNovel* vn) {
+	char script[PATH_MAX];
+	strcpy(script, vn->path);
+	strcat(script, "/script.vn");
+	FILE* file = fopen(script, "r");
 
 	if (file == NULL) {
 		error(file, "Invalid file name");
@@ -124,7 +131,34 @@ void loadVisualNovel(VisualNovel* vn, const char* filename) {
 			} else {
 				error(file, "Invalid usage of require");
 			}
-		} else {
+		} else
+
+		if (strcmp(command, "image") == 0) {
+			if (state != Dialogue) {
+				error(file, "Invalid usage of image");
+			}
+			char image[IMAGE_SIZE];
+			getString(file, image, IMAGE_SIZE);
+			addImage(vn, dialogue, image);
+		} else
+
+		if (strcmp(command, "option") == 0) {
+			char option[DEFAULT_STRING_SIZE];
+			getString(file, option, DEFAULT_STRING_SIZE);
+			if (strcmp(option, "curses") == 0) {
+				vn->cursesMode = true;
+			} else if (strcmp(option, "nocurses") == 0) {
+				vn->cursesMode = false;
+			} else if (strcmp(option, "cps") == 0) {
+				getInt(file, &vn->cps);
+			} else if (strcmp(option, "dialogueheight") == 0) {
+				getInt(file, &vn->dialogueWindowHeight);
+			} else {
+				error(file, "Invalid option");
+			}
+		} else
+
+		{
 			error(file, "Invalid Command");
 		}
 	}

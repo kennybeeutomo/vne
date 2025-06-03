@@ -10,24 +10,9 @@ Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	strcpy(dialogue->text, text);
 	strcpy(dialogue->speaker, speaker);
 	strcpy(dialogue->requiredFlag, "");
+	strcpy(dialogue->image, "");
 	dialogue->next = NULL;
 	return dialogue;
-}
-
-void printDialogue(Dialogue* dialogue, Flag* flags) {
-	Dialogue* head = dialogue;
-	while (dialogue != NULL) {
-		if (findFlag(flags, dialogue->requiredFlag)) {
-			if (dialogue != head) {
-				getchar();
-			}
-			if (dialogue->speaker[0] != '\0') {
-				printf("%s: ", dialogue->speaker);
-			}
-			printf("%s\n", dialogue->text);
-		}
-		dialogue = dialogue->next;
-	}
 }
 
 Dialogue* tailDialogue(Dialogue* dialogue) {
@@ -36,6 +21,32 @@ Dialogue* tailDialogue(Dialogue* dialogue) {
 	}
 	while (dialogue->next != NULL) dialogue = dialogue->next;
 	return dialogue;
+}
+
+Dialogue* nextDialogue(Dialogue* dialogue, Flag* flags) {
+	if (dialogue == NULL) {
+		return dialogue;
+	}
+
+	dialogue = dialogue->next;
+	while (dialogue != NULL) {
+		if (findFlag(flags, dialogue->requiredFlag)) {
+			break;
+		}
+		dialogue = dialogue->next;
+	}
+
+	return dialogue;
+}
+
+Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags) {
+	if (dialogues == NULL) {
+		return NULL;
+	}
+	if (!findFlag(flags, dialogues->requiredFlag)) {
+		return nextDialogue(dialogues, flags);
+	}
+	return dialogues;
 }
 
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {

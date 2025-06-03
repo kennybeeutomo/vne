@@ -1,7 +1,6 @@
 #include "choice.h"
 #include "flag.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 Choice* initChoice(char text[CHOICE_SIZE], Scene* scene) {
@@ -10,19 +9,23 @@ Choice* initChoice(char text[CHOICE_SIZE], Scene* scene) {
 	strcpy(choice->requiredFlag, "");
 	strcpy(choice->flagToAdd, "");
 	choice->next = NULL;
+	choice->prev = NULL;
 	choice->scene = scene;
 	return choice;
 }
 
-void printChoices(Choice* choice, Flag* flags) {
-	int i = 1;
-	while (choice != NULL) {
-		if (findFlag(flags, choice->requiredFlag)) {
-			printf("%d. %s\n", i, choice->text);
-			i++;
+Choice* choiceAt(Choice* choices, Flag* flags, int i) {
+	int n = 1;
+	while (choices != NULL) {
+		if (findFlag(flags, choices->requiredFlag)) {
+			if (n == i) {
+				break;
+			}
+			n++;
 		}
-		choice = choice->next;
+		choices = choices->next;
 	}
+	return choices;
 }
 
 Choice* tailChoice(Choice* choice) {
@@ -31,6 +34,48 @@ Choice* tailChoice(Choice* choice) {
 	}
 	while (choice->next != NULL) choice = choice->next;
 	return choice;
+}
+
+Choice* nextChoice(Choice* choice, Flag* flags) {
+	if (choice == NULL) {
+		return choice;
+	}
+
+	choice = choice->next;
+	while (choice != NULL) {
+		if (findFlag(flags, choice->requiredFlag)) {
+			break;
+		}
+		choice = choice->next;
+	}
+
+	return choice;
+}
+
+Choice* prevChoice(Choice* choice, Flag* flags) {
+	if (choice == NULL) {
+		return choice;
+	}
+
+	choice = choice->prev;
+	while (choice != NULL) {
+		if (findFlag(flags, choice->requiredFlag)) {
+			break;
+		}
+		choice = choice->prev;
+	}
+
+	return choice;
+}
+
+Choice* getFirstChoice(Choice* choices, Flag* flags) {
+	if (choices == NULL) {
+		return NULL;
+	}
+	if (!findFlag(flags, choices->requiredFlag)) {
+		return nextChoice(choices, flags);
+	}
+	return choices;
 }
 
 Choice* appendChoice(Choice* choice, char text[CHOICE_SIZE], Scene* scene) {
@@ -43,33 +88,35 @@ Choice* appendChoice(Choice* choice, char text[CHOICE_SIZE], Scene* scene) {
 	Choice* curr = choice;
 	while (curr->next != NULL) curr = curr->next;
 	curr->next = newChoice;
+	newChoice->prev = curr;
 
 	return choice;
 }
 
-Choice* deleteChoice(Choice* choice, char text[CHOICE_SIZE]) {
-	if (choice == NULL) {
+Choice* deleteChoice(Choice* choices, Choice* target) {
+	if (target == NULL) {
+		return choices;
+	}
+
+	if (choices == NULL) {
 		return NULL;
 	}
 
-	if (strcmp(choice->text, text) == 0) {
-		free(choice);
+	if (choices == target) {
+		free(target);
 		return NULL;
 	}
 
-	Choice* curr = choice->next;
-	Choice* prev = choice;
+	Choice* curr = choices->next;
 	while (curr != NULL) {
-		if (strcmp(curr->text, text) == 0) {
-			prev->next = curr->next;
+		if (curr == target) {
+			curr->prev->next = curr->next;
 			free(curr);
-			break;
 		}
-		prev = curr;
 		curr = curr->next;
 	}
 
-	return choice;
+	return choices;
 }
 
 Choice* freeChoices(Choice* choice) {

@@ -1,0 +1,65 @@
+# Script to test features
+scene 0
+dialogue "" "This is scene 0"
+dialogue "" "This is dialogue"
+dialogue "" "This is another dialogue"
+dialogue ""
+"This is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\n\nPick a choice:"
+
+choice "A" 1
+choice "B" 2
+choice "C" 3
+choice "D" 4
+choice "Multi-\nline\nChoice" 5
+choice "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Choice" 5
+
+scene 1
+dialogue "" "You chose A"
+dialogue "" "You are now in scene 1"
+choice "Next" 5
+
+scene 2
+dialogue "" "You chose B"
+dialogue "" "You are now in scene 2"
+choice "Next" 5
+
+scene 3
+dialogue "" "You chose C"
+dialogue "" "You are now in scene 3"
+choice "Next" 5
+
+scene 4
+dialogue "" "You chose D"
+dialogue "" "You are now in scene 4"
+choice "Next" 5
+
+scene 5
+dialogue "" "You are now in scene 5"
+dialogue "Person A" "This is a spoken dialogue"
+dialogue "Person B" "This is another spoken dialogue"
+dialogue "" "Pick a choice again:"
+choice "This choice should not be able to be seen" 5 require "X"
+choice "P" 6 set "P"
+choice "Q" 6 set "Q"
+choice "Go back to start" 0
+choice "Replay this scene again" 5
+
+scene 6
+dialogue "" "This dialogue should never appear" require "X"
+dialogue "" "This dialogue should never appear" require "X"
+dialogue "" "You are now in scene 6"
+dialogue "" "The next dialogue should appear when you choose P or R"
+dialogue "" "You chose P or R" require "P"
+dialogue "" "The next dialogue should appear when you choose Q or S"
+dialogue "" "You chose Q or S" require "Q"
+dialogue "" "This dialogue should never appear" require "X"
+choice "This choice only appears if you chose P" 7 require "P"
+choice "This choice only appears if you chose Q" 7 require "Q"
+choice "This choice also only appears if you chose P" 7 require "P"
+choice "This choice also only appears if you chose Q" 7 require "Q"
+
+scene 7
+dialogue "" "Here's an image"
+dialogue "" "Image shown" image "test"
+dialogue "" "Image cleared" image ""
+dialogue "" "Exiting"

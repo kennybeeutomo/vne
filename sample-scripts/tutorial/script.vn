@@ -1,0 +1,122 @@
+scene 0
+dialogue "" "Welcome to the Visual Novel Engine (VNE)!" image "title"
+dialogue "" "This short interactive tutorial will show you how this engine works."
+
+dialogue "" "Let's start with a simple question."
+
+dialogue "" "What would you like to do?"
+
+choice "Learn about dialogue" 1
+choice "Learn about choices" 2
+choice "Learn about flags" 3
+choice "Learn about images" 5
+choice "Learn about options" 6
+choice "How to run my own scripts?" 7
+choice "Finish tutorial" 9
+
+scene 8
+dialogue "" "What would you like to do next?" image "title"
+choice "Learn about dialogue" 1
+choice "Learn about choices" 2
+choice "Learn about flags" 3
+choice "Learn about images" 5
+choice "Learn about options" 6
+choice "How to run my own scripts?" 7
+choice "Finish tutorial" 9
+
+scene 1
+dialogue "" "Dialogue is the most basic element of a visual novel."
+dialogue "" "Use the command:
+dialogue \"<speaker>\" \"<text>\"
+If <speaker> is \"\", aka empty string, it becomes narration."
+
+dialogue "" "Like this very message you're reading now!"
+
+choice "Back to menu" 8
+
+scene 2
+dialogue "" "Choices allow the player to influence the story."
+dialogue "" "Use the command:
+choice \"<text>\" <scene id>
+The player sees <text>, and choosing it jumps to <scene id>."
+
+dialogue "" "You're experiencing choices right now."
+
+choice "Back to menu" 8
+
+scene 3
+dialogue "" "Flags are powerful tools for branching logic."
+dialogue "" "Use:
+set \"<flag name>\" - activates a flag when a choice is made
+require \"<flag name>\" - shows dialogue or choice only if flag is set"
+
+dialogue "" "Try picking a suspicious answer above."
+
+choice "I understand flags!" 4 set "understandsflags"
+choice "I don't get it..." 4
+
+scene 4
+dialogue "" "Great, let's test if you understood flags."
+
+dialogue "" "If you chose the right answer, you'll see a secret message!"
+
+dialogue "" "Checking flag..." require "understandsflags"
+dialogue "" "You got the flag! That's how conditional content works." require "understandsflags"
+
+choice "Back to menu" 8
+
+scene 5
+dialogue "" "Images let you display ASCII art before a dialogue line."
+
+dialogue "" "Use the command:
+dialogue \"<speaker>\" \"<text>\" image \"<image file name>\""
+
+dialogue "" "When this dialogue is reached, the engine will look for
+images/<image file name> and print its content first."
+
+dialogue "" "You should only use this on dialogue lines, not choices!"
+
+dialogue "" "Let's try it out with an image called 'test'."
+
+dialogue "" "If you saw a smiley face above, it worked!" image "test"
+
+dialogue "" "If you can't see it clearly, try resizing the terminal."
+
+dialogue "" "You can create your own images as plain text files."
+
+dialogue "" "Just make sure they're inside the images/ directory."
+
+choice "Back to menu" 8
+
+scene 6
+dialogue "" "To set options, use:
+option \"<option>\" [option value]"
+dialogue "" "Here's the list of options:
+option curses      (sets visual novel to use curses ui - default)
+option nocurses    (sets visual novel to not use curses ui)
+option cps X       (sets characters per second to X - default=120)
+option dialogueheight X      (sets dialogue window height to X - default=6)"
+
+choice "Back to menu" 8
+
+scene 7
+dialogue "" "To run your own visual novel script, use the terminal:
+vne <path to script folder>"
+dialogue "" "For example:
+vne sample-scripts/mystery"
+dialogue "" "Your script should follow the same format you've seen here."
+dialogue "" "If ran without any arguments, this tutorial will play by default."
+
+dialogue "" "You can also overwrite options on the command line"
+dialogue "" "For example,
+vne -nocurses
+to run this tutorial without the curses ui."
+dialogue "" "Here's the list of options:
+-curses - force curses ui
+-nocurses - force disable curses ui"
+
+choice "Back to menu" 8
+
+scene 9
+dialogue "" "You've reached the end of the tutorial."
+dialogue "" "Thank you for trying out the Visual Novel Engine. Have fun creating stories!"

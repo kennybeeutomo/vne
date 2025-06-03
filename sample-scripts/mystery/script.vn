@@ -17,13 +17,13 @@ choice "Talk to the witness" 2
 
 scene 2
 dialogue "Witness" "I saw someone... tall, wore a hoodie. I think they dropped something. I was too scared to move."
-dialogue "Officer Lin" "We did find a pendant near the body. Could be the victim’s or the killer’s."
+dialogue "Officer Lin" "We did find a pendant near the body. Could be the victim's or the killer's."
 
 choice "Ask about the pendant" 3
 choice "Inspect the pendant closely" 4 set "clue_pendant"
 
 scene 3
-dialogue "Witness" "It was round, black... some kind of symbol on it. Couldn’t make it out."
+dialogue "Witness" "It was round, black... some kind of symbol on it. Couldn't make it out."
 
 choice "Inspect the pendant" 4 set "clue_pendant"
 
@@ -48,7 +48,7 @@ dialogue "Detective" "Here's what I've gathered."
 
 dialogue "Detective" "The killer left a hidden message. They're taunting us." require "deduction_message"
 dialogue "Detective" "This pendant suggests military training. They know how to cover their tracks." require "deduction_military"
-dialogue "Detective" "The killer might be someone close to the victim. The attack wasn’t random." require "deduction_known"
+dialogue "Detective" "The killer might be someone close to the victim. The attack wasn't random." require "deduction_known"
 
 dialogue "Officer Lin" "That's... solid reasoning. Should we brief the chief?"
 

@@ -1,15 +1,19 @@
-NAME = vne
-EXE = $(NAME)
-TARGET = ./$(EXE)
+TARGET = vne
 
 CFILES = $(wildcard src/*.c)
+HEADERS = $(wildcard src/*.h)
 OBJECTS = $(CFILES:.c=.o)
 
 DEBUG = on
 
 CC = gcc
 CFLAGS = -Wall -std=c99
-LDLIBS =
+LDLIBS = -lncurses
+
+ifeq ($(OS), Windows_NT)
+	CFLAGS += -Iexternal/pdcurses -Lexternal/pdcurses
+	LDLIBS = -lpdcurses
+endif
 
 ifeq ($(DEBUG),on)
 	CFLAGS += -g3 -O0
@@ -17,23 +21,22 @@ else
 	CFLAGS += -O2
 endif
 
-all: $(OBJECTS)
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $(TARGET) $(LDLIBS)
 
-src/%.o: src/%.c src/%.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/%.o: src/%.c
+src/%.o: src/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm src/*.o
 
 run:
-	$(TARGET)
+	./$(TARGET)
 
 test:
-	echo 1 | $(TARGET)
+	./$(TARGET) sample-scripts/test
 
 debug:
 	gdb -q $(TARGET)

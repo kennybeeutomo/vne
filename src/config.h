@@ -1,10 +1,19 @@
 #pragma once
 
+#define DEFAULT_STRING_SIZE 1024
+
 #define SPEAKER_SIZE 30
 #define TEXT_SIZE 1000
+#define IMAGE_SIZE 50
 
 #define CHOICE_SIZE 200
 
 #define FLAG_SIZE 30
 
+#define PATH_MAX 4096
 #define SCENES_MAX 1000
+
+#define DEFAULT_SCRIPT_PATH "sample-scripts/tutorial"
+#define CURSES_MODE true
+#define DEFAULT_CPS 120
+#define DEFAULT_DIALOGUE_WINDOW_HEIGHT 6
