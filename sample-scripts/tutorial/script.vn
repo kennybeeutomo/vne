@@ -50,6 +50,11 @@ dialogue "" "Use:
 set \"<flag name>\" - activates a flag when a choice is made
 require \"<flag name>\" - shows dialogue or choice only if flag is set"
 
+dialogue "" "You can also unset flags"
+dialogue "" "Use:
+unset \"<flag name>\" - removes a flag when a choice is made
+unsetall - removes all flags when a choice is made"
+
 dialogue "" "Try picking a suspicious answer above."
 
 choice "I understand flags!" 4 set "understandsflags"
@@ -63,7 +68,8 @@ dialogue "" "If you chose the right answer, you'll see a secret message!"
 dialogue "" "Checking flag..." require "understandsflags"
 dialogue "" "You got the flag! That's how conditional content works." require "understandsflags"
 
-choice "Back to menu" 8
+
+choice "Back to menu" 8 unset "understandsflags"
 
 scene 5
 dialogue "" "Images let you display ASCII art before a dialogue line."

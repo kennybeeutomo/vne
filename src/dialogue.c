@@ -2,7 +2,6 @@
 #include "flag.h"
 #include "stdlib.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <string.h>
 
 Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {

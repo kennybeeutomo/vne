@@ -41,6 +41,9 @@ dialogue "" "Pick a choice again:"
 choice "This choice should not be able to be seen" 5 require "X"
 choice "P" 6 set "P"
 choice "Q" 6 set "Q"
+choice "Unset P" 6 unset "P" require "P"
+choice "Unset Q" 6 unset "Q" require "Q"
+choice "Unset All" 6 unsetall
 choice "Go back to start" 0
 choice "Replay this scene again" 5
 
@@ -57,6 +60,7 @@ choice "This choice only appears if you chose P" 7 require "P"
 choice "This choice only appears if you chose Q" 7 require "Q"
 choice "This choice also only appears if you chose P" 7 require "P"
 choice "This choice also only appears if you chose Q" 7 require "Q"
+choice "Go back" 5
 
 scene 7
 dialogue "" "Here's an image"

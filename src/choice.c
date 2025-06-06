@@ -1,5 +1,6 @@
 #include "choice.h"
 #include "flag.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -103,8 +104,9 @@ Choice* deleteChoice(Choice* choices, Choice* target) {
 	}
 
 	if (choices == target) {
+		Choice* next = choices->next;
 		free(target);
-		return NULL;
+		return next;
 	}
 
 	Choice* curr = choices->next;
@@ -135,5 +137,9 @@ void requireChoiceFlag(Choice* choice, char flag[FLAG_SIZE]) {
 }
 
 void setFlag(Choice* choice, char flag[FLAG_SIZE]) {
-	strcpy(choice->flagToAdd, flag);
+	sprintf(choice->flagToAdd, "+%s", flag);
+}
+
+void unsetFlag(Choice* choice, char flag[FLAG_SIZE]) {
+	sprintf(choice->flagToAdd, "-%s", flag);
 }

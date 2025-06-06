@@ -105,7 +105,19 @@ Choice* choose(VisualNovel* vn) {
 	}
 
 	if (curr != NULL) {
-		vn->flags = appendFlag(vn->flags, curr->flagToAdd);
+		switch (curr->flagToAdd[0]) {
+			case '+':
+				vn->flags = appendFlag(vn->flags, curr->flagToAdd + 1);
+				break;
+			case '-':
+				vn->flags = deleteFlag(vn->flags, curr->flagToAdd + 1);
+				break;
+			case '\0':
+				break;
+			default:
+				fprintf(stderr, "Invalid flag\n");
+				exit(1);
+		}
 		setScene(vn, curr->scene);
 	}
 

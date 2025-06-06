@@ -14,6 +14,7 @@ typedef struct Scene {
 typedef struct VisualNovel {
 	Scene scenes[SCENES_MAX];
 	Flag* flags;
+
 	Scene* currentScene;
 	Dialogue* currentDialogue;
 	Choice* currentChoice;

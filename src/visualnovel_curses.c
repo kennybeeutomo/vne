@@ -10,12 +10,6 @@
 
 typedef enum {Invalid, Next, Prev, Accept, Exit} Input;
 
-void endVNCurses(VisualNovel* vn) {
-	endwin();
-	freeVisualNovel(vn);
-	exit(0);
-}
-
 int mod(const int a, const int b) {
 	if (b == 0) return 0;
 	return (a % b + b) % b;
@@ -187,9 +181,9 @@ void printChoicesCurses(VisualNovel* vn) {
 void chooseMenuCurses(VisualNovel* vn) {
 	Input input = Invalid;
 	while (input != Accept) {
-		printChoicesCurses(vn);
 		Choice* next = nextChoice(vn->currentChoice, vn->flags);
 		Choice* prev = prevChoice(vn->currentChoice, vn->flags);
+		printChoicesCurses(vn);
 		input = getInput();
 		switch (input) {
 			case Next:
@@ -232,4 +226,10 @@ void startVisualNovelCurses(VisualNovel* vn) {
 
 	getch();
 	endVNCurses(vn);
+}
+
+void endVNCurses(VisualNovel* vn) {
+	endwin();
+	freeVisualNovel(vn);
+	exit(0);
 }

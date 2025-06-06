@@ -33,6 +33,36 @@ Flag* appendFlag(Flag* flag, char name[FLAG_SIZE]) {
 	return flag;
 }
 
+Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
+	if (strcmp(name, "*") == 0) {
+		return freeFlags(flag);
+	}
+
+	if (name[0] == '\0' || flag == NULL) {
+		return flag;
+	}
+
+	if (strcmp(flag->name, name) == 0) {
+		Flag* next = flag->next;
+		free(flag);
+		return next;
+	}
+
+	Flag* curr = flag->next;
+	Flag* prev = flag;
+
+	while (curr != NULL) {
+		if (strcmp(curr->name, name) == 0) {
+			prev->next = curr->next;
+			free(curr);
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+
+	return flag;
+}
+
 Flag* freeFlags(Flag* flag) {
 	if (flag == NULL) {
 		return NULL;

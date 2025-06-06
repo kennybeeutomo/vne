@@ -1,6 +1,7 @@
 #include "choice.h"
 #include "config.h"
 #include "dialogue.h"
+#include "flag.h"
 #include "visualnovel.h"
 
 #include <ctype.h>
@@ -119,6 +120,23 @@ void loadVisualNovel(VisualNovel* vn) {
 			char flag[FLAG_SIZE];
 			getString(file, flag, FLAG_SIZE);
 			setFlag(choice, flag);
+		} else
+
+		if (strcmp(command, "unset") == 0) {
+			if (state != Choice) {
+				error(file, "Invalid usage of unset");
+			}
+			char flag[FLAG_SIZE];
+			getString(file, flag, FLAG_SIZE);
+			unsetFlag(choice, flag);
+		} else
+
+		if (strcmp(command, "unsetall") == 0) {
+			if (state != Choice) {
+				error(file, "Invalid usage of unsetall");
+			}
+			char flag[FLAG_SIZE] = "*";
+			unsetFlag(choice, flag);
 		} else
 
 		if (strcmp(command, "require") == 0) {
