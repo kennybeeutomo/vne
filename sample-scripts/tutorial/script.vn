@@ -48,12 +48,43 @@ scene 3
 dialogue "" "Flags are powerful tools for branching logic."
 dialogue "" "Use:
 set \"<flag name>\" - activates a flag when a choice is made
-require \"<flag name>\" - shows dialogue or choice only if flag is set"
+if \"<expression>\" - shows dialogue or choice only if expression is true
+flag names should contain only alphanumeric characters and underscores, no spaces"
+
+dialogue "" "Example:
+choice \"A choice\" 2 set \"A\" - this will set flag A when chosen
+dialogue \"\" \"A dialogue\" if \"A\" - this will only show up when flag A is active"
+
+dialogue "" "You can use logical operators to make complex conditional expressions."
+dialogue "" "They are:
+not A - evaluates to True if A is not active
+A and B - evaluates to True if A and B are both active
+A or B - evaluates to True if either A or B or both is active
+A and ( B or C ) - evaluates B or C first"
+
+dialogue "" "Make sure the operators are separated with spaces, especially the parentheses"
+dialogue "" "Don't do these for example:
+AandBorC - this will assume AandBorC is one single flag
+A and (B or C) - this will assume \"(B\" and \"C)\" are flags"
+
+dialogue "" "Do these instead:
+A and B or C
+A and ( B or C )"
 
 dialogue "" "You can also unset flags"
 dialogue "" "Use:
 unset \"<flag name>\" - removes a flag when a choice is made
-unsetall - removes all flags when a choice is made"
+unsetall - removes all flags when a choice is made (same as unset \"*\")"
+
+dialogue "" "You can set multiple flags in a single choice"
+dialogue "" "For example:
+choice \"A and B\" 4 set \"A\" set \"B\"
+will set the flag A and B when it's chosen"
+
+dialogue "" "You can even make a choice to set and unset a flag at the same time"
+dialogue "" "For example:
+choice \"A and no B\" 4 set \"A\" unset \"B\"
+will set the flag A and unset B when it's chosen"
 
 dialogue "" "Try picking a suspicious answer above."
 
@@ -65,8 +96,8 @@ dialogue "" "Great, let's test if you understood flags."
 
 dialogue "" "If you chose the right answer, you'll see a secret message!"
 
-dialogue "" "Checking flag..." require "understandsflags"
-dialogue "" "You got the flag! That's how conditional content works." require "understandsflags"
+dialogue "" "Checking flag..." if "understandsflags"
+dialogue "" "You got the flag! That's how conditional content works." if "understandsflags"
 
 
 choice "Back to menu" 8 unset "understandsflags"
@@ -91,6 +122,13 @@ dialogue "" "If you can't see it clearly, try resizing the terminal."
 dialogue "" "You can create your own images as plain text files."
 
 dialogue "" "Just make sure they're inside the images/ directory."
+
+dialogue "" "To clear/hide an image, just use an image file name that doesn't exist, usually an empty string"
+
+dialogue "" "So if you do this:
+image \"\""
+
+dialogue "" "It should stop showing the image. Like that." image ""
 
 choice "Back to menu" 8
 

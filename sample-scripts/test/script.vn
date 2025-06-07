@@ -1,8 +1,11 @@
 # Script to test features
+
 scene 0
 dialogue "" "This is scene 0"
 dialogue "" "This is dialogue"
 dialogue "" "This is another dialogue"
+dialogue "Person A" "This is a spoken dialogue"
+dialogue "Person B" "This is another spoken dialogue"
 dialogue ""
 "This is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\n\nPick a choice:"
 
@@ -11,8 +14,11 @@ choice "B" 2
 choice "C" 3
 choice "D" 4
 choice "Multi-\nline\nChoice" 5
-choice "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Choice" 5
 
+# Test wrapping
+choice "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Choice" 5
+
+# Test branching paths
 scene 1
 dialogue "" "You chose A"
 dialogue "" "You are now in scene 1"
@@ -33,37 +39,46 @@ dialogue "" "You chose D"
 dialogue "" "You are now in scene 4"
 choice "Next" 5
 
+# Test flags
 scene 5
-dialogue "" "You are now in scene 5"
-dialogue "Person A" "This is a spoken dialogue"
-dialogue "Person B" "This is another spoken dialogue"
-dialogue "" "Pick a choice again:"
-choice "This choice should not be able to be seen" 5 require "X"
+dialogue "" "Pick a choice:"
+
+# Setting flags
 choice "P" 6 set "P"
 choice "Q" 6 set "Q"
-choice "Unset P" 6 unset "P" require "P"
-choice "Unset Q" 6 unset "Q" require "Q"
-choice "Unset All" 6 unsetall
+
+# Set multiple flags
+choice "P and Q" 6 set "P" set "Q"
+
+# Unset flags
+choice "Unset P" 6 unset "P" if "P"
+choice "Unset Q" 6 unset "Q" if "Q"
+
+# Unset all flags
+choice "Unset All" 6 unsetall if "P and Q"
+
 choice "Go back to start" 0
 choice "Replay this scene again" 5
 
+# Test conditionals
 scene 6
-dialogue "" "This dialogue should never appear" require "X"
-dialogue "" "This dialogue should never appear" require "X"
 dialogue "" "You are now in scene 6"
-dialogue "" "The next dialogue should appear when you choose P or R"
-dialogue "" "You chose P or R" require "P"
-dialogue "" "The next dialogue should appear when you choose Q or S"
-dialogue "" "You chose Q or S" require "Q"
-dialogue "" "This dialogue should never appear" require "X"
-choice "This choice only appears if you chose P" 7 require "P"
-choice "This choice only appears if you chose Q" 7 require "Q"
-choice "This choice also only appears if you chose P" 7 require "P"
-choice "This choice also only appears if you chose Q" 7 require "Q"
+dialogue "" "You have P flag" if "P"
+dialogue "" "You have Q flag" if "Q"
+
+# Complex conditional expressions
+dialogue "" "You have P and Q" if "P and Q"
+dialogue "" "You don't have any flags" if "not ( P or Q )"
+
+choice "This choice only appears if you chose P" 7 if "P"
+choice "This choice only appears if you chose Q" 7 if "Q"
+choice "This choice also only appears if you chose P" 7 if "P"
+choice "This choice also only appears if you chose Q" 7 if "Q"
 choice "Go back" 5
 
+# Test images
 scene 7
 dialogue "" "Here's an image"
 dialogue "" "Image shown" image "test"
-dialogue "" "Image cleared" image ""
+dialogue "" "Image cleared" image "j"
 dialogue "" "Exiting"

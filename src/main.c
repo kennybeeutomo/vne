@@ -1,14 +1,15 @@
 #include "visualnovel.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 void parseOpts(VisualNovel* vn, const char* arg) {
-	if (strcmp(arg, "-nocurses") == 0) {
+	if (eq(arg, "-nocurses")) {
 		vn->cursesMode = false;
 		return;
 	}
-	if (strcmp(arg, "-curses") == 0) {
+	if (eq(arg, "-curses")) {
 		vn->cursesMode = true;
 		return;
 	}

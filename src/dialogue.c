@@ -1,14 +1,12 @@
 #include "dialogue.h"
-#include "flag.h"
-#include "stdlib.h"
-#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	Dialogue* dialogue = malloc(sizeof(Dialogue));
 	strcpy(dialogue->text, text);
 	strcpy(dialogue->speaker, speaker);
-	strcpy(dialogue->requiredFlag, "");
+	strcpy(dialogue->requiredFlags, "");
 	strcpy(dialogue->image, "");
 	dialogue->next = NULL;
 	return dialogue;
@@ -29,7 +27,7 @@ Dialogue* nextDialogue(Dialogue* dialogue, Flag* flags) {
 
 	dialogue = dialogue->next;
 	while (dialogue != NULL) {
-		if (findFlag(flags, dialogue->requiredFlag)) {
+		if (evaluateFlags(flags, dialogue->requiredFlags)) {
 			break;
 		}
 		dialogue = dialogue->next;
@@ -42,7 +40,7 @@ Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags) {
 	if (dialogues == NULL) {
 		return NULL;
 	}
-	if (!findFlag(flags, dialogues->requiredFlag)) {
+	if (!evaluateFlags(flags, dialogues->requiredFlags)) {
 		return nextDialogue(dialogues, flags);
 	}
 	return dialogues;
@@ -73,6 +71,6 @@ Dialogue* freeDialogues(Dialogue* dialogue) {
 	return NULL;
 }
 
-void requireDialogueFlag(Dialogue* dialogue, char flag[FLAG_SIZE]) {
-	strcpy(dialogue->requiredFlag, flag);
+void requireDialogueFlag(Dialogue* dialogue, char flag[DEFAULT_STRING_SIZE]) {
+	strcpy(dialogue->requiredFlags, flag);
 }

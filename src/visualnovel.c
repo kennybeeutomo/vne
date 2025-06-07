@@ -62,7 +62,7 @@ void printDialogues(VisualNovel* vn) {
 	Dialogue* head = vn->currentScene->dialogues;
 	Dialogue* curr = head;
 	while (curr != NULL) {
-		if (findFlag(vn->flags, curr->requiredFlag)) {
+		if (evaluateFlags(vn->flags, curr->requiredFlags)) {
 			if (curr != head) {
 				getchar();
 			}
@@ -80,7 +80,7 @@ void printChoices(VisualNovel* vn) {
 	int i = 1;
 	Choice* curr = vn->currentScene->choices;
 	while (curr != NULL) {
-		if (findFlag(vn->flags, curr->requiredFlag)) {
+		if (evaluateFlags(vn->flags, curr->requiredFlags)) {
 			printf("%d. %s\n", i, curr->text);
 			i++;
 		}
@@ -105,19 +105,8 @@ Choice* choose(VisualNovel* vn) {
 	}
 
 	if (curr != NULL) {
-		switch (curr->flagToAdd[0]) {
-			case '+':
-				vn->flags = appendFlag(vn->flags, curr->flagToAdd + 1);
-				break;
-			case '-':
-				vn->flags = deleteFlag(vn->flags, curr->flagToAdd + 1);
-				break;
-			case '\0':
-				break;
-			default:
-				fprintf(stderr, "Invalid flag\n");
-				exit(1);
-		}
+		vn->flags = appendFlags(vn->flags, curr->flagsToSet);
+		vn->flags = deleteFlags(vn->flags, curr->flagsToUnset);
 		setScene(vn, curr->scene);
 	}
 

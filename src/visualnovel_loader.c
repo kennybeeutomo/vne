@@ -3,13 +3,16 @@
 #include "dialogue.h"
 #include "flag.h"
 #include "visualnovel.h"
+#include "utils.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void error(FILE* file, const char* msg) {
+char errmsg[DEFAULT_STRING_SIZE * 2];
+
+void errorParse(FILE* file, const char* msg) {
 	fprintf(stderr, "Load error: %s", msg);
 	if (file != NULL) {
 		long pos = ftell(file);
@@ -26,13 +29,14 @@ void error(FILE* file, const char* msg) {
 		}
 		fprintf(stderr, " at line: %d, col: %d", lines, cols);
 	}
+
 	fprintf(stderr, "\n");
 	exit(1);
 }
 
 void getInt(FILE* file, int* n) {
 	if (fscanf(file, " %d", n) == 0) {
-		error(file, "Invalid int parsing");
+		errorParse(file, "Invalid int parsing");
 	}
 }
 
@@ -46,7 +50,7 @@ void getString(FILE* file, char* string, int n) {
 	} while (isspace(c));
 
 	if (c != '"') {
-		error(file, "Invalid string parsing");
+		errorParse(file, "Invalid string parsing");
 	}
 
 	while (1) {
@@ -61,7 +65,8 @@ void getString(FILE* file, char* string, int n) {
 			}
 		}
 		if (i >= n - 1) {
-			error(file, "Parsed string is too long");
+			sprintf(errmsg, "Parsed string is too long (%d max)", n);
+			errorParse(file, errmsg);
 		}
 		string[i] = c;
 		i++;
@@ -75,7 +80,7 @@ void loadVisualNovel(VisualNovel* vn) {
 	FILE* file = fopen(script, "r");
 
 	if (file == NULL) {
-		error(file, "Invalid file name");
+		errorParse(file, "Invalid file name");
 	}
 
 	freeVisualNovel(vn);
@@ -87,15 +92,15 @@ void loadVisualNovel(VisualNovel* vn) {
 
 	char command[16];
 	while (fscanf(file, " %s", command) == 1) {
-		if (strcmp(command, "#") == 0) {
+		if (eq(command, "#")) {
 			fscanf(file, "%*[^\n\r]%*[\n\r]");
 		} else
 
-		if (strcmp(command, "scene") == 0) {
+		if (eq(command, "scene")) {
 			getInt(file, &sceneId);
 		} else
 
-		if (strcmp(command, "dialogue") == 0) {
+		if (eq(command, "dialogue")) {
 			char speaker[SPEAKER_SIZE];
 			char text[TEXT_SIZE];
 			getString(file, speaker, SPEAKER_SIZE);
@@ -104,7 +109,7 @@ void loadVisualNovel(VisualNovel* vn) {
 			state = Dialogue;
 		} else
 
-		if (strcmp(command, "choice") == 0) {
+		if (eq(command, "choice")) {
 			char text[CHOICE_SIZE];
 			int destId;
 			getString(file, text, CHOICE_SIZE);
@@ -113,71 +118,85 @@ void loadVisualNovel(VisualNovel* vn) {
 			state = Choice;
 		} else
 
-		if (strcmp(command, "set") == 0) {
+		if (eq(command, "set")) {
 			if (state != Choice) {
-				error(file, "Invalid usage of set");
+				errorParse(file, "Invalid usage of set");
 			}
 			char flag[FLAG_SIZE];
 			getString(file, flag, FLAG_SIZE);
+			if (!isFlag(flag)) {
+				sprintf(errmsg, "Invalid flag parsing \"%s\"", flag);
+				errorParse(file, errmsg);
+			}
 			setFlag(choice, flag);
 		} else
 
-		if (strcmp(command, "unset") == 0) {
+		if (eq(command, "unset")) {
 			if (state != Choice) {
-				error(file, "Invalid usage of unset");
+				errorParse(file, "Invalid usage of unset");
 			}
 			char flag[FLAG_SIZE];
 			getString(file, flag, FLAG_SIZE);
+			if (!isFlag(flag)) {
+				sprintf(errmsg, "Invalid flag parsing \"%s\"", flag);
+				errorParse(file, errmsg);
+			}
 			unsetFlag(choice, flag);
 		} else
 
-		if (strcmp(command, "unsetall") == 0) {
+		if (eq(command, "unsetall")) {
 			if (state != Choice) {
-				error(file, "Invalid usage of unsetall");
+				errorParse(file, "Invalid usage of unsetall");
 			}
 			char flag[FLAG_SIZE] = "*";
 			unsetFlag(choice, flag);
 		} else
 
-		if (strcmp(command, "require") == 0) {
-			char flag[FLAG_SIZE];
-			getString(file, flag, FLAG_SIZE);
+		if (eq(command, "if")) {
+			char condition[DEFAULT_STRING_SIZE];
+			getString(file, condition, DEFAULT_STRING_SIZE);
+			if (evaluateFlags(NULL, condition) == -1) {
+				sprintf(errmsg, "Invalid condition syntax \"%s\"", condition);
+				errorParse(file, errmsg);
+			}
 			if (state == Dialogue) {
-				requireDialogueFlag(dialogue, flag);
+				requireDialogueFlag(dialogue, condition);
 			} else if (state == Choice) {
-				requireChoiceFlag(choice, flag);
+				requireChoiceFlag(choice, condition);
 			} else {
-				error(file, "Invalid usage of require");
+				errorParse(file, "Invalid usage of if");
 			}
 		} else
 
-		if (strcmp(command, "image") == 0) {
+		if (eq(command, "image")) {
 			if (state != Dialogue) {
-				error(file, "Invalid usage of image");
+				errorParse(file, "Invalid usage of image");
 			}
 			char image[IMAGE_SIZE];
 			getString(file, image, IMAGE_SIZE);
 			addImage(vn, dialogue, image);
 		} else
 
-		if (strcmp(command, "option") == 0) {
+		if (eq(command, "option")) {
 			char option[DEFAULT_STRING_SIZE];
 			getString(file, option, DEFAULT_STRING_SIZE);
-			if (strcmp(option, "curses") == 0) {
+			if (eq(option, "curses")) {
 				vn->cursesMode = true;
-			} else if (strcmp(option, "nocurses") == 0) {
+			} else if (eq(option, "nocurses")) {
 				vn->cursesMode = false;
-			} else if (strcmp(option, "cps") == 0) {
+			} else if (eq(option, "cps")) {
 				getInt(file, &vn->cps);
-			} else if (strcmp(option, "dialogueheight") == 0) {
+			} else if (eq(option, "dialogueheight")) {
 				getInt(file, &vn->dialogueWindowHeight);
 			} else {
-				error(file, "Invalid option");
+				sprintf(errmsg, "Invalid option \"%s\"", option);
+				errorParse(file, errmsg);
 			}
 		} else
 
 		{
-			error(file, "Invalid Command");
+			sprintf(errmsg, "Invalid Command \"%s\"", command);
+			errorParse(file, errmsg);
 		}
 	}
 

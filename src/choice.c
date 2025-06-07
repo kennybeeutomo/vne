@@ -1,14 +1,13 @@
 #include "choice.h"
-#include "flag.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 Choice* initChoice(char text[CHOICE_SIZE], Scene* scene) {
 	Choice* choice = malloc(sizeof(Choice));
 	strcpy(choice->text, text);
-	strcpy(choice->requiredFlag, "");
-	strcpy(choice->flagToAdd, "");
+	strcpy(choice->requiredFlags, "");
+	choice->flagsToUnset = NULL;
+	choice->flagsToSet = NULL;
 	choice->next = NULL;
 	choice->prev = NULL;
 	choice->scene = scene;
@@ -18,7 +17,7 @@ Choice* initChoice(char text[CHOICE_SIZE], Scene* scene) {
 Choice* choiceAt(Choice* choices, Flag* flags, int i) {
 	int n = 1;
 	while (choices != NULL) {
-		if (findFlag(flags, choices->requiredFlag)) {
+		if (evaluateFlags(flags, choices->requiredFlags)) {
 			if (n == i) {
 				break;
 			}
@@ -44,7 +43,7 @@ Choice* nextChoice(Choice* choice, Flag* flags) {
 
 	choice = choice->next;
 	while (choice != NULL) {
-		if (findFlag(flags, choice->requiredFlag)) {
+		if (evaluateFlags(flags, choice->requiredFlags)) {
 			break;
 		}
 		choice = choice->next;
@@ -60,7 +59,7 @@ Choice* prevChoice(Choice* choice, Flag* flags) {
 
 	choice = choice->prev;
 	while (choice != NULL) {
-		if (findFlag(flags, choice->requiredFlag)) {
+		if (evaluateFlags(flags, choice->requiredFlags)) {
 			break;
 		}
 		choice = choice->prev;
@@ -73,25 +72,25 @@ Choice* getFirstChoice(Choice* choices, Flag* flags) {
 	if (choices == NULL) {
 		return NULL;
 	}
-	if (!findFlag(flags, choices->requiredFlag)) {
+	if (!evaluateFlags(flags, choices->requiredFlags)) {
 		return nextChoice(choices, flags);
 	}
 	return choices;
 }
 
-Choice* appendChoice(Choice* choice, char text[CHOICE_SIZE], Scene* scene) {
+Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
 	Choice* newChoice = initChoice(text, scene);
 
-	if (choice == NULL) {
+	if (choices == NULL) {
 		return newChoice;
 	}
 
-	Choice* curr = choice;
+	Choice* curr = choices;
 	while (curr->next != NULL) curr = curr->next;
 	curr->next = newChoice;
 	newChoice->prev = curr;
 
-	return choice;
+	return choices;
 }
 
 Choice* deleteChoice(Choice* choices, Choice* target) {
@@ -132,14 +131,14 @@ Choice* freeChoices(Choice* choice) {
 	return NULL;
 }
 
-void requireChoiceFlag(Choice* choice, char flag[FLAG_SIZE]) {
-	strcpy(choice->requiredFlag, flag);
+void requireChoiceFlag(Choice* choice, char flag[DEFAULT_STRING_SIZE]) {
+	strcpy(choice->requiredFlags, flag);
 }
 
 void setFlag(Choice* choice, char flag[FLAG_SIZE]) {
-	sprintf(choice->flagToAdd, "+%s", flag);
+	choice->flagsToSet = appendFlag(choice->flagsToSet, flag);
 }
 
 void unsetFlag(Choice* choice, char flag[FLAG_SIZE]) {
-	sprintf(choice->flagToAdd, "-%s", flag);
+	choice->flagsToUnset = appendFlag(choice->flagsToUnset, flag);
 }

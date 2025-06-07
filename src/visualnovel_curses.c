@@ -10,11 +10,6 @@
 
 typedef enum {Invalid, Next, Prev, Accept, Exit} Input;
 
-int mod(const int a, const int b) {
-	if (b == 0) return 0;
-	return (a % b + b) % b;
-}
-
 void fill(int y, int x, int rows, int cols) {
 	for (int i = 0; i < rows; ++i) {
 		mvhline(y + i, x, ' ', cols);

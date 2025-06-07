@@ -1,5 +1,8 @@
 #include "flag.h"
+#include "config.h"
+#include "utils.h"
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -23,18 +26,23 @@ Flag* appendFlag(Flag* flag, char name[FLAG_SIZE]) {
 
 	Flag* curr = flag;
 	while (curr->next != NULL) {
-		if (strcmp(curr->name, name) == 0) {
+		if (eq(curr->name, name)) {
 			return flag;
 		}
 		curr = curr->next;
 	}
+
+	if (eq(curr->name, name)) {
+		return flag;
+	}
+
 	curr->next = newFlag;
 
 	return flag;
 }
 
 Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
-	if (strcmp(name, "*") == 0) {
+	if (eq(name, "*")) {
 		return freeFlags(flag);
 	}
 
@@ -42,7 +50,7 @@ Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
 		return flag;
 	}
 
-	if (strcmp(flag->name, name) == 0) {
+	if (eq(flag->name, name)) {
 		Flag* next = flag->next;
 		free(flag);
 		return next;
@@ -52,7 +60,7 @@ Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
 	Flag* prev = flag;
 
 	while (curr != NULL) {
-		if (strcmp(curr->name, name) == 0) {
+		if (eq(curr->name, name)) {
 			prev->next = curr->next;
 			free(curr);
 		}
@@ -61,6 +69,33 @@ Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
 	}
 
 	return flag;
+}
+
+Flag* appendFlags(Flag* flag, Flag* flagsToAppend) {
+	while (flagsToAppend != NULL) {
+		flag = appendFlag(flag, flagsToAppend->name);
+		flagsToAppend = flagsToAppend->next;
+	}
+
+	return flag;
+}
+
+Flag* deleteFlags(Flag* flag, Flag* flagsToDelete) {
+	while (flagsToDelete != NULL) {
+		flag = deleteFlag(flag, flagsToDelete->name);
+		flagsToDelete = flagsToDelete->next;
+	}
+
+	return flag;
+}
+
+bool isFlag(char flag[FLAG_SIZE]) {
+	for (int i = 0; flag[i] != '\0'; ++i) {
+		if (!(isalnum(flag[i]) || flag[i] == '_')) {
+			return false;
+		}
+	}
+	return true;
 }
 
 Flag* freeFlags(Flag* flag) {
@@ -72,17 +107,4 @@ Flag* freeFlags(Flag* flag) {
 	free(flag);
 
 	return NULL;
-}
-
-bool findFlag(Flag* flag, char name[FLAG_SIZE]) {
-	if (name[0] == '\0') {
-		return true;
-	}
-	while (flag != NULL) {
-		if (strcmp(flag->name, name) == 0) {
-			return true;
-		}
-		flag = flag->next;
-	}
-	return false;
 }

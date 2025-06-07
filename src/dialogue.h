@@ -7,7 +7,7 @@ typedef struct Dialogue Dialogue;
 typedef struct Dialogue {
 	char speaker[SPEAKER_SIZE];
 	char text[TEXT_SIZE];
-	char requiredFlag[FLAG_SIZE];
+	char requiredFlags[DEFAULT_STRING_SIZE];
 	char image[IMAGE_SIZE];
 	Dialogue* next;
 } Dialogue;
@@ -21,4 +21,4 @@ Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags);
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Dialogue* freeDialogues(Dialogue* dialogue);
 
-void requireDialogueFlag(Dialogue* dialogue, char flag[FLAG_SIZE]);
+void requireDialogueFlag(Dialogue* dialogue, char flag[DEFAULT_STRING_SIZE]);
