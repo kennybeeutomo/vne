@@ -118,6 +118,16 @@ void loadVisualNovel(VisualNovel* vn) {
 			state = Choice;
 		} else
 
+		if (eq(command, "preset")) {
+			char flag[FLAG_SIZE];
+			getString(file, flag, FLAG_SIZE);
+			if (!isFlag(flag)) {
+				sprintf(errmsg, "Invalid flag parsing \"%s\"", flag);
+				errorParse(file, errmsg);
+			}
+			vn->flags = appendFlag(vn->flags, flag);
+		} else
+
 		if (eq(command, "set")) {
 			if (state != Choice) {
 				errorParse(file, "Invalid usage of set");

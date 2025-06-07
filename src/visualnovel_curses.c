@@ -2,6 +2,7 @@
 #include "config.h"
 #include "dialogue.h"
 #include "visualnovel.h"
+#include "utils.h"
 #include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -14,6 +15,52 @@ void fill(int y, int x, int rows, int cols) {
 	for (int i = 0; i < rows; ++i) {
 		mvhline(y + i, x, ' ', cols);
 	}
+}
+
+int printStr(WINDOW* win, const char* str, int y, int x, int width) {
+	wmove(win, y, x);
+	for (int i = 0, j = 0; str[i] != '\0'; ++i) {
+		if (str[i] == '\n' || j >= width) {
+			wmove(win, ++y, x);
+			if (str[i] != '\n') {
+				waddch(win, str[i]);
+			}
+			j = 0;
+		} else {
+			waddch(win, str[i]);
+		}
+		j++;
+	}
+	return y;
+}
+
+void printHelp() {
+	const char helpText[] = "wasd/hjkl - Navigation\n"
+	                        "q - Quit\n"
+	                        "Space/Enter - Confirm\n"
+	                        "\nPress any key to continue...";
+	const char helpTitle[] = "[ Controls ]";
+
+	int helpWidth = 35;
+	int helpHeight = countStrHeight(helpText, helpWidth) + 2;
+	int x = getmaxx(stdscr) / 2 - helpWidth / 2;
+	int y = getmaxy(stdscr) / 2 - helpHeight / 2;
+
+	WINDOW* win = newwin(helpHeight, helpWidth, y, x);
+
+	wattron(win, COLOR_PAIR(2));
+	box(win, 0, 0);
+	mvwprintw(win, 0, helpWidth / 2 - strlen(helpTitle) / 2, "%s", helpTitle);
+	wattroff(win, COLOR_PAIR(2));
+
+	printStr(win, helpText, 1, 1, helpWidth - 2);
+
+	wrefresh(win);
+	wgetch(win);
+	wclear(win);
+	wrefresh(win);
+
+	delwin(win);
 }
 
 Input getInput() {
@@ -34,23 +81,11 @@ Input getInput() {
 			input = Exit;
 			break;
 		default:
+			printHelp();
 			input = Invalid;
 	}
 
 	return input;
-}
-
-int countStrHeight(const char* str, int width) {
-	int height = 1;
-	int col = 0;
-	for (int i = 0; str[i] != '\0'; ++i) {
-		if (str[i] == '\n' || col >= width) {
-			height++;
-			col = 1;
-		}
-		col++;
-	}
-	return height;
 }
 
 int getChoiceHeight(VisualNovel* vn) {
@@ -70,23 +105,6 @@ int getDialogueHeight(VisualNovel* vn, Dialogue* dialogue) {
 	int height = countStrHeight(dialogue->text, getmaxx(stdscr)) + 1;
 	height = (height > vn->dialogueWindowHeight) ? height : vn->dialogueWindowHeight;
 	return height;
-}
-
-int printStr(const char* str, int y, int x, int width) {
-	move(y, x);
-	for (int i = 0, j = 0; str[i] != '\0'; ++i) {
-		if (str[i] == '\n' || j >= width) {
-			move(++y, x);
-			if (str[i] != '\n') {
-				addch(str[i]);
-			}
-			j = 0;
-		} else {
-			addch(str[i]);
-		}
-		j++;
-	}
-	return y;
 }
 
 void printImageCurses(char image[IMAGE_SIZE]) {
@@ -164,7 +182,7 @@ void printChoicesCurses(VisualNovel* vn) {
 			attron(A_REVERSE);
 			mvaddch(y, 0, '>');
 		}
-		y = printStr(curr->text, y, 1, getmaxx(stdscr) - 1) + 1;
+		y = printStr(stdscr, curr->text, y, 1, getmaxx(stdscr) - 1) + 1;
 		if (curr == vn->currentChoice) {
 			attroff(A_REVERSE); 
 		}

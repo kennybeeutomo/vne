@@ -46,6 +46,40 @@ void addImage(VisualNovel* vn, Dialogue* dialogue, char image[IMAGE_SIZE]) {
 	strcat(dialogue->image, image);
 }
 
+bool isEndingScene(Scene scene) {
+	return scene.choices == NULL;
+}
+
+void freeScene(Scene* scene) {
+	scene->dialogues = freeDialogues(scene->dialogues);
+	scene->choices = freeChoices(scene->choices);
+}
+
+void setScene(VisualNovel* vn, Scene* scene) {
+	vn->currentScene = scene;
+	vn->currentDialogue = getFirstDialogue(scene->dialogues, vn->flags);
+	vn->currentChoice = getFirstChoice(scene->choices, vn->flags);
+}
+
+Choice* choose(VisualNovel* vn) {
+	Choice* curr = vn->currentScene->choices;
+
+	while (curr != NULL) {
+		if (curr == vn->currentChoice) {
+			break;
+		}
+		curr = curr->next;
+	}
+
+	if (curr != NULL) {
+		vn->flags = appendFlags(vn->flags, curr->flagsToSet);
+		vn->flags = deleteFlags(vn->flags, curr->flagsToUnset);
+		setScene(vn, curr->scene);
+	}
+
+	return curr;
+}
+
 void printImage(char image[IMAGE_SIZE]) {
 	FILE* file = fopen(image, "r");
 	if (file == NULL) {
@@ -88,31 +122,6 @@ void printChoices(VisualNovel* vn) {
 	}
 }
 
-void setScene(VisualNovel* vn, Scene* scene) {
-	vn->currentScene = scene;
-	vn->currentDialogue = getFirstDialogue(scene->dialogues, vn->flags);
-	vn->currentChoice = getFirstChoice(scene->choices, vn->flags);
-}
-
-Choice* choose(VisualNovel* vn) {
-	Choice* curr = vn->currentScene->choices;
-
-	while (curr != NULL) {
-		if (curr == vn->currentChoice) {
-			break;
-		}
-		curr = curr->next;
-	}
-
-	if (curr != NULL) {
-		vn->flags = appendFlags(vn->flags, curr->flagsToSet);
-		vn->flags = deleteFlags(vn->flags, curr->flagsToUnset);
-		setScene(vn, curr->scene);
-	}
-
-	return curr;
-}
-
 void choiceMenu(VisualNovel* vn) {
 	int choice;
 	do {
@@ -120,15 +129,6 @@ void choiceMenu(VisualNovel* vn) {
 		scanf("%d", &choice); getchar();
 		vn->currentChoice = choiceAt(vn->currentScene->choices, vn->flags, choice);
 	} while (choose(vn) == NULL);
-}
-
-bool isEndingScene(Scene scene) {
-	return scene.choices == NULL;
-}
-
-void freeScene(Scene* scene) {
-	scene->dialogues = freeDialogues(scene->dialogues);
-	scene->choices = freeChoices(scene->choices);
 }
 
 void startVisualNovel(VisualNovel* vn) {
