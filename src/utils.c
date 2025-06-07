@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <ctype.h>
 
 int mod(const int a, const int b) {
 	if (b == 0) return 0;
@@ -16,4 +17,10 @@ int countStrHeight(const char* str, int width) {
 		col++;
 	}
 	return height;
+}
+
+int skipNumbers(int i, const char* str) {
+	if (str[i] == '-') { i++; }
+	while (isdigit(str[i])) { i++; }
+	return i;
 }

@@ -48,10 +48,10 @@ void printHelp() {
 
 	WINDOW* win = newwin(helpHeight, helpWidth, y, x);
 
-	wattron(win, COLOR_PAIR(2));
+	wattron(win, COLOR_PAIR(4));
 	box(win, 0, 0);
 	mvwprintw(win, 0, helpWidth / 2 - strlen(helpTitle) / 2, "%s", helpTitle);
-	wattroff(win, COLOR_PAIR(2));
+	wattroff(win, COLOR_PAIR(4));
 
 	printStr(win, helpText, 1, 1, helpWidth - 2);
 
@@ -113,11 +113,11 @@ void printImageCurses(char image[IMAGE_SIZE]) {
 		return;
 	}
 	char text[DEFAULT_STRING_SIZE];
-	attron(COLOR_PAIR(1));
+	attron(COLOR_PAIR(7));
 	while (fgets(text, DEFAULT_STRING_SIZE, file) != NULL) {
 		addstr(text);
 	}
-	attroff(COLOR_PAIR(1));
+	attroff(COLOR_PAIR(7));
 	fclose(file);
 }
 
@@ -130,9 +130,7 @@ void printDialoguesCurses(VisualNovel* vn) {
 		if (curr != head) {
 			Input input = Invalid;
 			while (input == Invalid) input = getInput();
-			if (input == Exit) {
-				endVNCurses(vn);
-			}
+			if (input == Exit) { endVNCurses(vn); }
 		}
 
 		clear();
@@ -145,9 +143,9 @@ void printDialoguesCurses(VisualNovel* vn) {
 
 		printImageCurses(vn->currentImage);
 
-		attron(COLOR_PAIR(2));
+		attron(COLOR_PAIR(4));
 		mvhline(y, 0, 0, getmaxx(stdscr));
-		attroff(COLOR_PAIR(2));
+		attroff(COLOR_PAIR(4));
 
 		fill(y + 1, 0, vn->dialogueWindowHeight, getmaxx(stdscr));
 
@@ -155,12 +153,49 @@ void printDialoguesCurses(VisualNovel* vn) {
 			mvprintw(y, 3, "[ %s ]", curr->speaker);
 		}
 
+		bool isBold = false, isItalic = false;
+
 		move(y + 1, 0);
 		for (int i = 0; curr->text[i] != '\0'; ++i) {
+			if (curr->text[i] == '\\') {
+				i++;
+				if (curr->text[i] == 'w') {
+					i++;
+					int delay;
+					sscanf(&curr->text[i], "%d", &delay);
+					i = skipNumbers(i, curr->text) - 1;
+					napms(delay);
+					continue;
+				}
+				if (curr->text[i] == 'b') {
+					if (isBold) { attroff(A_BOLD); }
+					else { attron(A_BOLD); }
+					isBold = !isBold;
+					continue;
+				}
+				if (curr->text[i] == 'i') {
+					if (isItalic) { attroff(A_ITALIC); }
+					else { attron(A_ITALIC); }
+					isItalic = !isItalic;
+					continue;
+				}
+				if (curr->text[i] == 'c') {
+					i++;
+					int color;
+					sscanf(&curr->text[i], "%d", &color);
+					i = skipNumbers(i, curr->text) - 1;
+					if (color == -1) { attroff(A_COLOR); }
+					else { attron(COLOR_PAIR(color)); }
+					continue;
+				}
+			}
+
 			addch(curr->text[i]);
 			refresh();
 			napms(1000/vn->cps);
 		}
+
+		attroff(A_BOLD); attroff(A_ITALIC); attroff(A_COLOR);
 
 		flushinp();
 		curr = nextDialogue(curr, vn->flags);
@@ -172,9 +207,9 @@ void printChoicesCurses(VisualNovel* vn) {
 	int dialogueHeight = getDialogueHeight(vn, tailDialogue(vn->currentScene->dialogues));
 	int y = getmaxy(stdscr) - dialogueHeight - choiceWindowHeight;
 
-	attron(COLOR_PAIR(2));
+	attron(COLOR_PAIR(4));
 	mvvline(y, 0, 0, choiceWindowHeight);
-	attroff(COLOR_PAIR(2));
+	attroff(COLOR_PAIR(4));
 
 	Choice* curr = getFirstChoice(vn->currentScene->choices, vn->flags);
 	while (curr != NULL) {
@@ -224,8 +259,9 @@ void startVisualNovelCurses(VisualNovel* vn) {
 	if (has_colors()) {
 		start_color();
 		use_default_colors();
-		init_pair(1, COLOR_WHITE, -1);
-		init_pair(2, COLOR_BLUE, -1);
+		for (int i = 0; i < 8; ++i) {
+			init_pair(i, i, -1);
+		}
 	}
 
 	setScene(vn, &vn->scenes[0]);

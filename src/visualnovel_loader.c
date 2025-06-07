@@ -62,6 +62,8 @@ void getString(FILE* file, char* string, int n) {
 			c = fgetc(file);
 			if (c == 'n') {
 				c = '\n';
+			} else {
+				string[i++] = '\\';
 			}
 		}
 		if (i >= n - 1) {

@@ -6,6 +6,12 @@ dialogue "" "This is dialogue"
 dialogue "" "This is another dialogue"
 dialogue "Person A" "This is a spoken dialogue"
 dialogue "Person B" "This is another spoken dialogue"
+dialogue "" "This \w500is \w500a \w500delayed \w500dialogue"
+dialogue "" "This is \bbold\b
+This is \iitalic\i
+This is \b\ibold-italic\b\i
+This is \c4blue\c-1
+This is \c1r\c2a\c3i\c4n\c5b\c6o\c7w\c-1"
 dialogue ""
 "This is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\nThis is\na multiline\ndialogue.\n\nPick a choice:"
 

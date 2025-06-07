@@ -12,6 +12,7 @@ choice "Learn about flags" 3
 choice "Learn about images" 5
 choice "Learn about options" 6
 choice "How to run my own scripts?" 7
+choice "Learn about escape sequences" 10
 choice "Finish tutorial" 9
 
 scene 8
@@ -160,6 +161,31 @@ dialogue "" "Here's the list of options:
 -nocurses - force disable curses ui"
 
 choice "Back to menu" 8
+
+scene 10
+dialogue "" "You can use \"\\\" to do some cool text magic, not only to newline with \"\\n\""
+dialogue "" "You can make text\w400 \bbold\b\w400, \iitalic\i\w400, \b\ibold-italic\b\i\w400, \c1c\c2o\c3l\c4o\c5r\c6f\c1u\c2l\c-1, and even \w400d\w400e\w400l\w400a\w400y\w400 characters"
+dialogue "" "This is how it looks like under the hood:
+
+You can make text\\w400 \\bbold\\b\\w400, \\iitalic\\i\\w400, \\b\\ibold-italic\\b\\i\\w400, \\c1c\\c2o\\c3l\\c4o\\c5r\\c6f\\c1u\\c2l\\c-1, and even \\w400d\\w400e\\w400l\\w400a\\w400y\\w400 characters"
+dialogue "" "As you saw,
+\\w<ms> delays for the specified duration in milliseconds
+\\b toggles bold
+\\i toggles italic
+\\c<color number> sets color to <color number>
+    where <color number> is:
+	 0  - black
+	 1  - red
+	 2  - green
+	 3  - yellow
+	 4  - blue
+	 5  - magenta
+	 6  - cyan
+	 7  - white
+	 -1 - reset color"
+
+choice "Back to menu" 8
+
 
 scene 9
 dialogue "" "You've reached the end of the tutorial."
