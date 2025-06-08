@@ -46,6 +46,16 @@ Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags) {
 	return dialogues;
 }
 
+Dialogue* getLastDialogue(Dialogue* dialogues, Flag* flags) {
+	Dialogue* curr = dialogues;
+	Dialogue* last = curr;
+	while (curr != NULL) {
+		last = curr;
+		curr = nextDialogue(curr, flags);
+	}
+	return last;
+}
+
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	Dialogue* newDialogue = initDialogue(speaker, text);
 

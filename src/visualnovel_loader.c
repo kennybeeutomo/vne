@@ -60,10 +60,17 @@ void getString(FILE* file, char* string, int n) {
 		}
 		if (c == '\\') {
 			c = fgetc(file);
-			if (c == 'n') {
-				c = '\n';
-			} else {
-				string[i++] = '\\';
+			switch (c) {
+				case 'n':
+					c = '\n';
+					break;
+				case 'w':
+				case 'b':
+				case 'i':
+				case 'c':
+				case '\\':
+					string[i++] = '\\';
+					break;
 			}
 		}
 		if (i >= n - 1) {

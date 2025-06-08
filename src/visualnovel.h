@@ -24,6 +24,7 @@ typedef struct VisualNovel {
 	bool cursesMode;
 	int cps;
 	int dialogueWindowHeight;
+	bool autoplay;
 } VisualNovel;
 
 VisualNovel initVN();

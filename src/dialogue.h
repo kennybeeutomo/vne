@@ -17,6 +17,7 @@ Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Dialogue* tailDialogue(Dialogue* dialogue);
 Dialogue* nextDialogue(Dialogue* dialogue, Flag* flags);
 Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags);
+Dialogue* getLastDialogue(Dialogue* dialogues, Flag* flags);
 
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Dialogue* freeDialogues(Dialogue* dialogue);

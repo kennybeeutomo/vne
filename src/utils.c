@@ -20,6 +20,7 @@ int countStrHeight(const char* str, int width) {
 }
 
 int skipNumbers(int i, const char* str) {
+	if (str[i] == '\0') { return i; }
 	if (str[i] == '-') { i++; }
 	while (isdigit(str[i])) { i++; }
 	return i;

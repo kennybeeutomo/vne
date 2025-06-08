@@ -23,6 +23,7 @@ Choice* tailChoice(Choice* choice);
 Choice* nextChoice(Choice* choice, Flag* flags);
 Choice* prevChoice(Choice* choice, Flag* flags);
 Choice* getFirstChoice(Choice* choices, Flag* flags);
+Choice* getLastChoice(Choice* choices, Flag* flags);
 
 Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene);
 Choice* deleteChoice(Choice* choices, Choice* target);

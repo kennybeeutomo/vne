@@ -3,6 +3,7 @@
 #include "config.h"
 #include "dialogue.h"
 #include "flag.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,7 @@ VisualNovel initVN() {
 		.cursesMode = CURSES_MODE,
 		.cps = DEFAULT_CPS,
 		.dialogueWindowHeight = DEFAULT_DIALOGUE_WINDOW_HEIGHT,
+		.autoplay = false,
 	};
 	return vn;
 }
@@ -92,33 +94,48 @@ void printImage(char image[IMAGE_SIZE]) {
 	fclose(file);
 }
 
-void printDialogues(VisualNovel* vn) {
-	Dialogue* head = vn->currentScene->dialogues;
-	Dialogue* curr = head;
-	while (curr != NULL) {
-		if (evaluateFlags(vn->flags, curr->requiredFlags)) {
-			if (curr != head) {
-				getchar();
+void printDialogue(VisualNovel* vn) {
+	Dialogue* dialogue = vn->currentDialogue;
+	printImage(vn->currentDialogue->image);
+
+	if (vn->currentDialogue->speaker[0] != '\0') {
+		printf("%s: ", vn->currentDialogue->speaker);
+	}
+
+	for (int i = 0; vn->currentDialogue->text[i] != '\0'; ++i) {
+		if (dialogue->text[i] == '\\') {
+			switch (dialogue->text[++i]) {
+				case 'w': case 'c':
+					i = skipNumbers(++i, dialogue->text);
+					i--;
+					continue;
+				case 'b': case 'i':
+					continue;
 			}
-			printImage(curr->image);
-			if (curr->speaker[0] != '\0') {
-				printf("%s: ", curr->speaker);
-			}
-			printf("%s\n", curr->text);
 		}
-		curr = curr->next;
+		putchar(vn->currentDialogue->text[i]);
+	}
+
+	printf("\n");
+}
+
+void printDialogues(VisualNovel* vn) {
+	Dialogue* head = vn->currentDialogue;
+	Dialogue* last = getLastDialogue(head, vn->flags);
+	while (1) {
+		printDialogue(vn);
+		if (vn->currentDialogue == last) { break; }
+		getchar();
+		vn->currentDialogue = nextDialogue(vn->currentDialogue, vn->flags);
 	}
 }
 
 void printChoices(VisualNovel* vn) {
 	int i = 1;
-	Choice* curr = vn->currentScene->choices;
+	Choice* curr = getFirstChoice(vn->currentScene->choices, vn->flags);
 	while (curr != NULL) {
-		if (evaluateFlags(vn->flags, curr->requiredFlags)) {
-			printf("%d. %s\n", i, curr->text);
-			i++;
-		}
-		curr = curr->next;
+		printf("%d. %s\n", i++, curr->text);
+		curr = nextChoice(curr, vn->flags);
 	}
 }
 

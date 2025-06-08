@@ -78,6 +78,16 @@ Choice* getFirstChoice(Choice* choices, Flag* flags) {
 	return choices;
 }
 
+Choice* getLastChoice(Choice* choices, Flag* flags) {
+	Choice* curr = choices;
+	Choice* last = curr;
+	while (curr != NULL) {
+		last = curr;
+		curr = nextChoice(curr, flags);
+	}
+	return last;
+}
+
 Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
 	Choice* newChoice = initChoice(text, scene);
 
