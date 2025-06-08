@@ -16,6 +16,7 @@ VisualNovel initVN() {
 		.currentDialogue = NULL,
 		.currentChoice = NULL,
 		.currentImage = {},
+		.history = NULL,
 		.path = DEFAULT_SCRIPT_PATH,
 		.cursesMode = CURSES_MODE,
 		.cps = DEFAULT_CPS,
@@ -46,6 +47,39 @@ void addImage(VisualNovel* vn, Dialogue* dialogue, char image[IMAGE_SIZE]) {
 	strcpy(dialogue->image, vn->path);
 	strcat(dialogue->image, "/images/");
 	strcat(dialogue->image, image);
+}
+
+void addDialogueToHistory(VisualNovel* vn) {
+	char text[TEXT_SIZE];
+	strcpy(text, vn->currentDialogue->text);
+	removeSequences(text);
+	vn->history = prependDialogue(vn->history, vn->currentDialogue->speaker, text);
+}
+
+void addChoiceToHistory(VisualNovel* vn) {
+	char speaker[SPEAKER_SIZE] = "You chose";
+	char text[TEXT_SIZE]; strcpy(text, vn->currentChoice->text);
+	vn->history = prependDialogue(vn->history, speaker, text);
+}
+
+void removeSequences(char* str) {
+	char temp[TEXT_SIZE];
+	memset(temp, 0, TEXT_SIZE);
+	int j = 0;
+	for (int i = 0; str[i] != '\0'; ++i) {
+		if (str[i] == '\\') {
+			switch (str[++i]) {
+				case 'w': case 'c':
+					i = skipNumbers(++i, str);
+					i--;
+					continue;
+				case 'b': case 'i':
+					continue;
+			}
+		}
+		temp[j++] = str[i];
+	}
+	strcpy(str, temp);
 }
 
 bool isEndingScene(Scene scene) {
@@ -102,21 +136,8 @@ void printDialogue(VisualNovel* vn) {
 		printf("%s: ", vn->currentDialogue->speaker);
 	}
 
-	for (int i = 0; vn->currentDialogue->text[i] != '\0'; ++i) {
-		if (dialogue->text[i] == '\\') {
-			switch (dialogue->text[++i]) {
-				case 'w': case 'c':
-					i = skipNumbers(++i, dialogue->text);
-					i--;
-					continue;
-				case 'b': case 'i':
-					continue;
-			}
-		}
-		putchar(vn->currentDialogue->text[i]);
-	}
-
-	printf("\n");
+	removeSequences(dialogue->text);
+	printf("%s\n", dialogue->text);
 }
 
 void printDialogues(VisualNovel* vn) {
@@ -172,4 +193,5 @@ void freeVisualNovel(VisualNovel* vn) {
 		freeScene(&vn->scenes[i]);
 	}
 	vn->flags = freeFlags(vn->flags);
+	vn->history = freeDialogues(vn->history);
 }

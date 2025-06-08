@@ -12,9 +12,11 @@ int countStrHeight(const char* str, int width) {
 	for (int i = 0; str[i] != '\0'; ++i) {
 		if (str[i] == '\n' || col >= width) {
 			height++;
-			col = 1;
+			col = 0;
+			if (str[i] == '\n') { continue; }
+		} else {
+			col++;
 		}
-		col++;
 	}
 	return height;
 }
@@ -24,4 +26,12 @@ int skipNumbers(int i, const char* str) {
 	if (str[i] == '-') { i++; }
 	while (isdigit(str[i])) { i++; }
 	return i;
+}
+
+void setstr(char* str, int n, char c) {
+	int i;
+	for (i = 0; i < n - 1; ++i) {
+		str[i] = c;
+	}
+	str[i] = '\0';
 }

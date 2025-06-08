@@ -9,6 +9,7 @@ Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	strcpy(dialogue->requiredFlags, "");
 	strcpy(dialogue->image, "");
 	dialogue->next = NULL;
+	dialogue->prev = NULL;
 	return dialogue;
 }
 
@@ -56,6 +57,18 @@ Dialogue* getLastDialogue(Dialogue* dialogues, Flag* flags) {
 	return last;
 }
 
+Dialogue* prependDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
+	Dialogue* newDialogue = initDialogue(speaker, text);
+
+	if (dialogue == NULL) {
+		return newDialogue;
+	}
+
+	dialogue->prev = newDialogue;
+	newDialogue->next = dialogue;
+	return newDialogue;
+}
+
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
 	Dialogue* newDialogue = initDialogue(speaker, text);
 
@@ -65,6 +78,7 @@ Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char te
 
 	Dialogue* curr = dialogue;
 	while (curr->next != NULL) curr = curr->next;
+	newDialogue->prev = curr;
 	curr->next = newDialogue;
 
 	return dialogue;

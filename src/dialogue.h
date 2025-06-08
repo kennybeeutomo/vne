@@ -10,6 +10,7 @@ typedef struct Dialogue {
 	char requiredFlags[DEFAULT_STRING_SIZE];
 	char image[IMAGE_SIZE];
 	Dialogue* next;
+	Dialogue* prev;
 } Dialogue;
 
 Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
@@ -19,6 +20,7 @@ Dialogue* nextDialogue(Dialogue* dialogue, Flag* flags);
 Dialogue* getFirstDialogue(Dialogue* dialogues, Flag* flags);
 Dialogue* getLastDialogue(Dialogue* dialogues, Flag* flags);
 
+Dialogue* prependDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Dialogue* freeDialogues(Dialogue* dialogue);
 

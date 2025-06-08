@@ -103,33 +103,6 @@ Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
 	return choices;
 }
 
-Choice* deleteChoice(Choice* choices, Choice* target) {
-	if (target == NULL) {
-		return choices;
-	}
-
-	if (choices == NULL) {
-		return NULL;
-	}
-
-	if (choices == target) {
-		Choice* next = choices->next;
-		free(target);
-		return next;
-	}
-
-	Choice* curr = choices->next;
-	while (curr != NULL) {
-		if (curr == target) {
-			curr->prev->next = curr->next;
-			free(curr);
-		}
-		curr = curr->next;
-	}
-
-	return choices;
-}
-
 Choice* freeChoices(Choice* choice) {
 	if (choice == NULL) {
 		return NULL;
