@@ -60,8 +60,11 @@ void printHistory(VisualNovel* vn) {
 	refresh();
 }
 
-void printImageCurses(char image[IMAGE_SIZE]) {
-	FILE* file = fopen(image, "r");
+void printImageCurses(VisualNovel* vn, char image[IMAGE_SIZE]) {
+	char imagePath[PATH_MAX];
+	getImagePath(imagePath, vn, image);
+
+	FILE* file = fopen(imagePath, "r");
 	if (file == NULL) {
 		return;
 	}
@@ -87,11 +90,11 @@ void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory) {
 
 	int y = getmaxy(stdscr) - dialogueWindowHeight;
 
-	if (dialogue != NULL && dialogue->image[0] != '\0') {
+	if (dialogue != NULL && notnullstr(dialogue->image)) {
 		strcpy(vn->currentImage, dialogue->image);
 	}
 
-	printImageCurses(vn->currentImage);
+	printImageCurses(vn, vn->currentImage);
 
 	attron(COLOR_PAIR(4));
 	mvhline(y, 0, 0, getmaxx(stdscr));
@@ -99,7 +102,7 @@ void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory) {
 
 	fill(y + 1, 0, vn->dialogueWindowHeight, getmaxx(stdscr), ' ');
 
-	if (dialogue != NULL && dialogue->speaker[0] != '\0') {
+	if (dialogue != NULL && notnullstr(dialogue->speaker)) {
 		mvprintw(y, 3, "[ %s ]", dialogue->speaker);
 	}
 

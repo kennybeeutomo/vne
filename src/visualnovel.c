@@ -43,10 +43,8 @@ Choice* addChoice(VisualNovel* vn, int sceneId, char text[CHOICE_SIZE], int dest
 	return tailChoice(choice);
 }
 
-void addImage(VisualNovel* vn, Dialogue* dialogue, char image[IMAGE_SIZE]) {
-	strcpy(dialogue->image, vn->path);
-	strcat(dialogue->image, "/images/");
-	strcat(dialogue->image, image);
+void addImage(Dialogue* dialogue, char image[IMAGE_SIZE]) {
+	strcpy(dialogue->image, image);
 }
 
 void addDialogueToHistory(VisualNovel* vn) {
@@ -126,8 +124,17 @@ void choose(VisualNovel* vn) {
 	setScene(vn, scene);
 }
 
-void printImage(char image[IMAGE_SIZE]) {
-	FILE* file = fopen(image, "r");
+void getImagePath(char imagePath[PATH_MAX], VisualNovel* vn, char image[IMAGE_SIZE]) {
+	strcpy(imagePath, vn->path);
+	strcat(imagePath, "/images/");
+	strcat(imagePath, image);
+}
+
+void printImage(VisualNovel* vn, char image[IMAGE_SIZE]) {
+	char imagePath[PATH_MAX];
+	getImagePath(imagePath, vn, image);
+
+	FILE* file = fopen(imagePath, "r");
 	if (file == NULL) {
 		return;
 	}
@@ -143,9 +150,9 @@ void printDialogue(VisualNovel* vn) {
 
 	if (dialogue == NULL) { return; }
 
-	printImage(vn->currentDialogue->image);
+	printImage(vn, vn->currentDialogue->image);
 
-	if (vn->currentDialogue->speaker[0] != '\0') {
+	if (notnullstr(vn->currentDialogue->speaker)) {
 		printf("%s: ", vn->currentDialogue->speaker);
 	}
 

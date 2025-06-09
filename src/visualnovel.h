@@ -38,11 +38,12 @@ void endVN(VisualNovel* vn);
 
 Dialogue* addDialogue(VisualNovel* vn, int sceneId, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]);
 Choice* addChoice(VisualNovel* vn, int sceneId, char text[CHOICE_SIZE], int destId);
-void addImage(VisualNovel* vn, Dialogue* dialogue, char image[IMAGE_SIZE]);
+void addImage(Dialogue* dialogue, char image[IMAGE_SIZE]);
 void addDialogueToHistory(VisualNovel* vn);
 void addChoiceToHistory(VisualNovel* vn);
 
 void removeSequences(char* str);
+void getImagePath(char imagePath[PATH_MAX], VisualNovel* vn, char image[IMAGE_SIZE]);
 
 void setScene(VisualNovel* vn, Scene* scene);
 void choose(VisualNovel* vn);
@@ -68,7 +69,7 @@ void getHistoryText(Dialogue* history, char* text, int width, int height);
 // visualnovel_curses.c
 void printHelp();
 void printHistory(VisualNovel* vn);
-void printImageCurses(char image[IMAGE_SIZE]);
+void printImageCurses(VisualNovel* vn, char image[IMAGE_SIZE]);
 void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory);
 void printDialoguesCurses(VisualNovel* vn);
 void printChoicesCurses(VisualNovel* vn);

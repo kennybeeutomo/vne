@@ -45,7 +45,7 @@ Flag* pop(Flag* flag) {
 }
 
 bool findFlag(Flag* flag, char name[FLAG_SIZE]) {
-	if (name[0] == '\0') {
+	if (nullstr(name)) {
 		return true;
 	}
 	while (flag != NULL) {
@@ -176,7 +176,7 @@ Flag* evaluate(Flag* postfix) {
 }
 
 int evaluateFlags(Flag* flags, const char requiredFlags[DEFAULT_STRING_SIZE]) {
-	if (requiredFlags[0] == '\0') {
+	if (nullstr(requiredFlags)) {
 		return true;
 	}
 

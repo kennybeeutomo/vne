@@ -126,7 +126,7 @@ void getHistoryText(Dialogue* history, char* text, int width, int height) {
 	Dialogue* curr = history;
 	while (curr != NULL) {
 		char dialogueText[TEXT_SIZE + SPEAKER_SIZE + 8];
-		if (curr->speaker[0] != '\0') {
+		if (notnullstr(curr->speaker)) {
 			sprintf(dialogueText, "%s: ", curr->speaker);
 			strcat(dialogueText, curr->text);
 		} else {

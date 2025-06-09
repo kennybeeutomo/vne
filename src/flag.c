@@ -14,7 +14,7 @@ Flag* initFlag(char name[FLAG_SIZE]) {
 }
 
 Flag* appendFlag(Flag* flag, char name[FLAG_SIZE]) {
-	if (name[0] == '\0') {
+	if (nullstr(name)) {
 		return flag;
 	}
 
@@ -46,7 +46,7 @@ Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
 		return freeFlags(flag);
 	}
 
-	if (name[0] == '\0' || flag == NULL) {
+	if (nullstr(name) || flag == NULL) {
 		return flag;
 	}
 

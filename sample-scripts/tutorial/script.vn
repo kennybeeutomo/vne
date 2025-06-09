@@ -1,7 +1,6 @@
 scene 0
 dialogue "" "Welcome to the Visual Novel Engine (VNE)!" image "title"
 dialogue "" "This short interactive tutorial will show you how this engine works."
-
 dialogue "" "Let's start with a simple question."
 
 scene 1

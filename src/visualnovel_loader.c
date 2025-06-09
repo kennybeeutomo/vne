@@ -199,7 +199,7 @@ void loadVisualNovel(VisualNovel* vn) {
 			}
 			char image[IMAGE_SIZE];
 			getString(file, image, IMAGE_SIZE);
-			addImage(vn, dialogue, image);
+			addImage(dialogue, image);
 		} else
 
 		if (eq(command, "option")) {
