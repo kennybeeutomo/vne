@@ -127,6 +127,12 @@ void loadVisualNovel(VisualNovel* vn) {
 			state = Choice;
 		} else
 
+		if (eq(command, "reuse")) {
+			int sourceSceneId;
+			getInt(file, &sourceSceneId);
+			vn->scenes[sceneId].choices = copyChoices(vn->scenes[sourceSceneId].choices, vn->scenes[sceneId].choices);
+		} else
+
 		if (eq(command, "preset")) {
 			char flag[FLAG_SIZE];
 			getString(file, flag, FLAG_SIZE);
@@ -207,6 +213,8 @@ void loadVisualNovel(VisualNovel* vn) {
 				getInt(file, &vn->cps);
 			} else if (eq(option, "dialogueheight")) {
 				getInt(file, &vn->dialogueWindowHeight);
+			} else if (eq(option, "autoplay")) {
+				vn->autoplay = true;
 			} else {
 				sprintf(errmsg, "Invalid option \"%s\"", option);
 				errorParse(file, errmsg);

@@ -87,4 +87,27 @@ scene 7
 dialogue "" "Here's an image"
 dialogue "" "Image shown" image "test"
 dialogue "" "Image cleared" image ""
-dialogue "" "Exiting"
+dialogue "" "Large image shown, try resizing terminal or lowering the font size" image "large"
+dialogue "" "Image cleared" image ""
+choice "Next" 8
+
+scene 8
+dialogue "" "You are in a scene without a choice"
+
+scene 9
+dialogue "" "You are in another scene without a choice"
+
+scene 10
+choice "You are in a scene without a dialogue" 11
+
+scene 11
+choice "You are in another scene without a dialogue" 12
+
+scene 12
+dialogue "" "These choices should be the same as those from scene 0"
+reuse 0
+choice "Next" 13
+
+scene 13
+dialogue "" "You are in an empty scene" if "x"
+choice "You are in an empty scene" 400 if "x"

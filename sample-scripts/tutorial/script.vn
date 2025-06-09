@@ -1,24 +1,22 @@
-preset "start"
-
 scene 0
-dialogue "" "Welcome to the Visual Novel Engine (VNE)!" image "title" if "start"
-dialogue "" "This short interactive tutorial will show you how this engine works." if "start"
+dialogue "" "Welcome to the Visual Novel Engine (VNE)!" image "title"
+dialogue "" "This short interactive tutorial will show you how this engine works."
 
-dialogue "" "Let's start with a simple question." if "start"
-
-dialogue "" "What would you like to do?" if "start"
-dialogue "" "What would you like to do next?" image "title" if "not start"
-
-choice "Learn about dialogue" 1 unset "start"
-choice "Learn about choices" 2 unset "start"
-choice "Learn about flags" 3 unset "start"
-choice "Learn about images" 5 unset "start"
-choice "Learn about options" 6 unset "start"
-choice "How to run my own scripts?" 7 unset "start"
-choice "Learn about escape sequences" 8 unset "start"
-choice "Finish tutorial" 9 unset "start"
+dialogue "" "Let's start with a simple question."
 
 scene 1
+dialogue "" "What would you like to do?" image "title"
+
+choice "Learn about dialogue" 2
+choice "Learn about choices" 3
+choice "Learn about flags" 4
+choice "Learn about images" 5
+choice "Learn about options" 6
+choice "How to run my own scripts?" 7
+choice "Learn about escape sequences" 8
+choice "Finish tutorial" 998
+
+scene 2
 dialogue "" "Dialogue is the most basic element of a visual novel."
 dialogue "" "Use the command:
 dialogue \"<speaker>\" \"<text>\"
@@ -26,19 +24,52 @@ If <speaker> is \"\", aka empty string, it becomes narration."
 
 dialogue "" "Like this very message you're reading now!"
 
-choice "Back to menu" 0
+choice "Back to menu" 1
 
-scene 2
+scene 3
 dialogue "" "Choices allow the player to influence the story."
 dialogue "" "Use the command:
 choice \"<text>\" <scene id>
 The player sees <text>, and choosing it jumps to <scene id>."
 
-dialogue "" "You're experiencing choices right now."
-
-choice "Back to menu" 0
-
+dialogue "" "If a scene has no choices, it will continue to the next non-empty scene id"
+dialogue "" "For example, scene 3 has no choices, so at the end, it will continue to scene 4
 scene 3
+dialogue \"\" \"Some dialogue\"
+dialogue \"\" \"Some other dialogue\"
+
+scene 4
+dialogue \"\" \"Some dialogue\""
+
+dialogue "" "If it can't find the next non-empty scene, and it reaches the max scene id, the visual novel ends."
+dialogue "" "For example, here, after scene 2 ends, the visual novel ends.
+scene 0
+dialogue \"\" \"dialogue\"
+
+scene 1
+dialogue \"\" \"dialogue\"
+
+scene 2
+dialogue \"\" \"dialogue\""
+
+dialogue "" "You can reuse choices from other scenes by using the command:
+reuse \"<scene id whose choices to reuse>\"
+This will copy every choice from that scene to the current scene, including their flags and flag requirements"
+
+dialogue "" "For example, here, scene 1 will have the exact same choices from scene 0
+scene 0
+dialogue \"\" \"dialogue\"
+choice \"A\" 1
+choice \"B\" 2 if \"X\"
+choice \"C\" 3 set \"P\"
+
+scene 1
+dialogue \"dialogue\"
+reuse 0"
+
+choice "Back to menu" 1
+
+scene 4
 dialogue "" "Flags are powerful tools for branching logic."
 dialogue "" "Use:
 set \"<flag name>\" - activates a flag when a choice is made
@@ -86,10 +117,10 @@ preset \"<flag name>\""
 dialogue "" "Let's try seeing flags in action.
 Try picking a suspicious answer above."
 
-choice "I understand flags!" 4 set "understandsflags"
-choice "I don't get it..." 4
+choice "I understand flags!" 41 set "understandsflags"
+choice "I don't get it..." 41
 
-scene 4
+scene 41
 dialogue "" "Great, let's test if you understood flags."
 
 dialogue "" "If you chose the right answer, you'll see a secret message!"
@@ -101,7 +132,7 @@ dialogue "" "Let's try again" if "not understandsflags"
 
 choice "I understand flags!" 4 if "not understandsflags" set "understandsflags"
 choice "I don't get it..." 4 if "not understandsflags"
-choice "Back to menu" 0 unset "understandsflags"
+choice "Back to menu" 1 unset "understandsflags"
 
 scene 5
 dialogue "" "Images let you display ASCII art before a dialogue line."
@@ -131,7 +162,7 @@ image \"\""
 
 dialogue "" "It should stop showing the image. Like that." image ""
 
-choice "Back to menu" 0
+choice "Back to menu" 1
 
 scene 6
 dialogue "" "To set options, use:
@@ -142,7 +173,7 @@ option nocurses    (sets visual novel to not use curses ui)
 option cps X       (sets characters per second to X - default=120)
 option dialogueheight X      (sets dialogue window height to X - default=6)"
 
-choice "Back to menu" 0
+choice "Back to menu" 1
 
 scene 7
 dialogue "" "To run your own visual novel script, use the terminal:
@@ -160,7 +191,7 @@ dialogue "" "Here's the list of options:
 -curses - force curses ui
 -nocurses - force disable curses ui"
 
-choice "Back to menu" 0
+choice "Back to menu" 1
 
 scene 8
 dialogue "" "You can use \"\\\" to do some cool text magic, not only to newline with \"\\n\""
@@ -186,9 +217,9 @@ As you can see,
 	 7 - white
 	-1 - reset color"
 
-choice "Back to menu" 0
+choice "Back to menu" 1
 
 
-scene 9
+scene 998
 dialogue "" "You've reached the end of the tutorial."
 dialogue "" "Thank you for trying out the Visual Novel Engine. Have fun creating stories!"

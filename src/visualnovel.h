@@ -45,8 +45,9 @@ void addChoiceToHistory(VisualNovel* vn);
 void removeSequences(char* str);
 
 void setScene(VisualNovel* vn, Scene* scene);
-Choice* choose(VisualNovel* vn);
-bool isEndingScene(Scene scene);
+void choose(VisualNovel* vn);
+bool isEndingScene(VisualNovel* vn, Scene* scene);
+bool isEmptyScene(VisualNovel* vn, Scene* scene);
 void freeScene(Scene* scene);
 void startVisualNovel(VisualNovel* vn);
 void freeVisualNovel(VisualNovel* vn);
@@ -55,7 +56,7 @@ void freeVisualNovel(VisualNovel* vn);
 void loadVisualNovel(VisualNovel* vn);
 
 // visualnovel_curses_utils.c
-void fill(int y, int x, int rows, int cols);
+void fill(int y, int x, int rows, int cols, chtype ch);
 int printStr(WINDOW* win, const char* str, int y, int x, int width);
 WINDOW* printTempWindow(const char* title, const char* text, int width, int height);
 Input getInput(WINDOW* win);

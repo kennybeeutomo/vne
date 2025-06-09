@@ -1,4 +1,5 @@
 #include "choice.h"
+#include "flag.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -112,6 +113,17 @@ Choice* freeChoices(Choice* choice) {
 	free(choice);
 
 	return NULL;
+}
+
+Choice* copyChoices(Choice* from, Choice* to) {
+	while (from != NULL) {
+		to = appendChoice(to, from->text, from->scene);
+		strcpy(to->requiredFlags, from->requiredFlags);
+		to->flagsToSet = appendFlags(to->flagsToSet, from->flagsToSet);
+		to->flagsToUnset = appendFlags(to->flagsToUnset, from->flagsToUnset);
+		from = from->next;
+	}
+	return to;
 }
 
 void requireChoiceFlag(Choice* choice, char flag[DEFAULT_STRING_SIZE]) {

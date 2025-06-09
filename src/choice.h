@@ -28,6 +28,8 @@ Choice* getLastChoice(Choice* choices, Flag* flags);
 Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene);
 Choice* freeChoices(Choice* choice);
 
+Choice* copyChoices(Choice* from, Choice* to);
+
 void requireChoiceFlag(Choice* choice, char flag[DEFAULT_STRING_SIZE]);
 void setFlag(Choice* choice, char flag[FLAG_SIZE]);
 void unsetFlag(Choice* choice, char flag[FLAG_SIZE]);

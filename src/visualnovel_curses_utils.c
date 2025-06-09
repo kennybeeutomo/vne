@@ -3,9 +3,9 @@
 
 #include <string.h>
 
-void fill(int y, int x, int rows, int cols) {
+void fill(int y, int x, int rows, int cols, chtype ch) {
 	for (int i = 0; i < rows; ++i) {
-		mvhline(y + i, x, ' ', cols);
+		mvhline(y + i, x, ch, cols);
 	}
 }
 
@@ -116,8 +116,9 @@ int getChoiceHeight(VisualNovel* vn) {
 }
 
 int getDialogueHeight(VisualNovel* vn, Dialogue* dialogue) {
+	if (vn->currentDialogue == NULL) { return vn->dialogueWindowHeight; }
 	int height = countStrHeight(dialogue->text, getmaxx(stdscr)) + 1;
-	height = (height > vn->dialogueWindowHeight) ? height : vn->dialogueWindowHeight;
+	height = max(height, vn->dialogueWindowHeight);
 	return height;
 }
 
