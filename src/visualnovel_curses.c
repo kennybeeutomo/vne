@@ -205,6 +205,7 @@ void printDialoguesCurses(VisualNovel* vn) {
 			break;
 		}
 
+		if (vn->currentDialogue == NULL) { break; }
 		vn->currentDialogue = nextDialogue(vn->currentDialogue, vn->flags);
 	}
 }
@@ -234,43 +235,44 @@ void printChoicesCurses(VisualNovel* vn) {
 }
 
 void chooseMenuCurses(VisualNovel* vn) {
-	if (vn->currentChoice != NULL) {
+	bool chosen = false;
+
+	Choice* head = getFirstChoice(vn->currentScene->choices, vn->flags);
+	Choice* last = getLastChoice(vn->currentScene->choices, vn->flags);
+
+	while (!chosen) {
+		if (vn->currentChoice == NULL) { break; }
+
+		Choice* next = nextChoice(vn->currentChoice, vn->flags);
+		Choice* prev = prevChoice(vn->currentChoice, vn->flags);
+
+		printChoicesCurses(vn);
+
 		Input input = Invalid;
-		bool chosen = false;
-
-		Choice* head = getFirstChoice(vn->currentScene->choices, vn->flags);
-		Choice* last = getLastChoice(vn->currentScene->choices, vn->flags);
-
-		while (!chosen) {
-			Choice* next = nextChoice(vn->currentChoice, vn->flags);
-			Choice* prev = prevChoice(vn->currentChoice, vn->flags);
-			printChoicesCurses(vn);
-			while (isInvalid(input)) {
-				input = getInputVN(stdscr, vn);
-				napms(DEBOUNCE_DURATION);
-			}
-			switch (input) {
-				case Next:
-					vn->currentChoice = (next == NULL) ? head : next;
-					break;
-				case Prev:
-					vn->currentChoice = (prev == NULL) ? last : prev;
-					break;
-				case Auto: case Resize:
-					printDialogueCurses(vn, true, false);
-					break;
-				case Accept:
-					chosen = true;
-					break;
-				default:
-					break;
-			}
-			input = Invalid;
+		while (isInvalid(input)) {
+			input = getInputVN(stdscr, vn);
 			napms(DEBOUNCE_DURATION);
 		}
 
-		addChoiceToHistory(vn);
+		switch (input) {
+			case Next:
+				vn->currentChoice = (next == NULL) ? head : next;
+				break;
+			case Prev:
+				vn->currentChoice = (prev == NULL) ? last : prev;
+				break;
+			case Auto: case Resize:
+				printDialogueCurses(vn, true, false);
+				break;
+			case Accept:
+				chosen = true;
+				break;
+			default:
+				break;
+		}
 	}
+
+	addChoiceToHistory(vn);
 
 	choose(vn);
 }

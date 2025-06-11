@@ -104,13 +104,20 @@ Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
 	return choices;
 }
 
+Choice* freeChoice(Choice* choice) {
+	freeFlags(choice->flagsToSet);
+	freeFlags(choice->flagsToUnset);
+	free(choice);
+	return NULL;
+}
+
 Choice* freeChoices(Choice* choice) {
 	if (choice == NULL) {
 		return NULL;
 	}
 
 	freeChoices(choice->next);
-	free(choice);
+	freeChoice(choice);
 
 	return NULL;
 }

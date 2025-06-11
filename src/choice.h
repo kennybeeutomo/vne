@@ -26,6 +26,7 @@ Choice* getFirstChoice(Choice* choices, Flag* flags);
 Choice* getLastChoice(Choice* choices, Flag* flags);
 
 Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene);
+Choice* freeChoice(Choice* choice);
 Choice* freeChoices(Choice* choice);
 
 Choice* copyChoices(Choice* from, Choice* to);

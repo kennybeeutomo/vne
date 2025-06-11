@@ -202,12 +202,19 @@ void loadVisualNovel(VisualNovel* vn) {
 			addImage(dialogue, image);
 		} else
 
+		if (eq(command, "clearimage")) {
+			if (state != Dialogue) {
+				errorParse(file, "Invalid usage of clearimage");
+			}
+			char image[IMAGE_SIZE] = {0};
+			image[0] = 1;
+			addImage(dialogue, image);
+		} else
+
 		if (eq(command, "option")) {
 			char option[DEFAULT_STRING_SIZE];
 			getString(file, option, DEFAULT_STRING_SIZE);
-			if (eq(option, "curses")) {
-				vn->cursesMode = true;
-			} else if (eq(option, "nocurses")) {
+			if (eq(option, "nocurses")) {
 				vn->cursesMode = false;
 			} else if (eq(option, "cps")) {
 				getInt(file, &vn->cps);

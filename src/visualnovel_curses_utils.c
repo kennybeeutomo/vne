@@ -1,6 +1,7 @@
 #include "visualnovel.h"
 #include "utils.h"
 
+#include <ctype.h>
 #include <string.h>
 
 void fill(int y, int x, int rows, int cols, chtype ch) {
@@ -40,6 +41,38 @@ WINDOW* printTempWindow(const char* title, const char* text, int width, int heig
 	wrefresh(win);
 
 	return win;
+}
+
+void editWindow(const char* title, char* text, int width, int cap) {
+
+	WINDOW* win;
+	bool running = true;
+
+	int i = strlen(text);
+	while (running) {
+		win = printTempWindow(title, text, width, -1);
+		keypad(win, true);
+
+		curs_set(1);
+		Input input = wgetch(win);
+		curs_set(0);
+
+		if (input == '\e') {
+			running = false;
+		} else if (input == KEY_BACKSPACE) {
+			if (i - 1 >= 0) {
+				text[--i] = '\0';
+				wclear(win);
+				wrefresh(win); 
+			}
+		} else if (isprint(input) || input == '\n') {
+			if (i + 1 < cap) { text[i++] = input; }
+		}
+		
+		delwin(win);
+	}
+
+	redrawwin(stdscr);
 }
 
 Input getInput(WINDOW* win) {

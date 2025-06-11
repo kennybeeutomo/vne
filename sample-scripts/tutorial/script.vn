@@ -6,6 +6,7 @@ dialogue "" "Let's start with a simple question."
 scene 1
 dialogue "" "What would you like to do?" image "title"
 
+choice "About VNE" 10
 choice "Learn about dialogue" 2
 choice "Learn about choices" 3
 choice "Learn about flags" 4
@@ -14,6 +15,12 @@ choice "Learn about options" 6
 choice "How to run my own scripts?" 7
 choice "Learn about escape sequences" 8
 choice "Finish tutorial" 998
+
+scene 10
+dialogue "" "VNE is a terminal-based visual novel engine using the curses library. It accepts a script file as an input, and presents it in an interactive visual novel interface as an output. It's inspired by RenPy a little bit."
+dialogue "" "This tutorial will show you how to write your own scripts."
+dialogue "" "It uses graph as the main data structure, where a scene is a node, and its choices are its edges pointing to different scenes. A scene is just a group of sequential dialogues and choices. A visual novel is one big graph of interconnected scenes."
+choice "Back to menu" 1
 
 scene 2
 dialogue "" "Dialogue is the most basic element of a visual novel."
@@ -129,8 +136,8 @@ dialogue "" "You got the flag! That's how conditional content works." if "unders
 dialogue "" "Looks like you don't have the flag." if "not understandsflags"
 dialogue "" "Let's try again" if "not understandsflags"
 
-choice "I understand flags!" 4 if "not understandsflags" set "understandsflags"
-choice "I don't get it..." 4 if "not understandsflags"
+choice "I understand flags!" 41 if "not understandsflags" set "understandsflags"
+choice "I don't get it..." 41 if "not understandsflags"
 choice "Back to menu" 1 unset "understandsflags"
 
 scene 5
@@ -154,12 +161,14 @@ dialogue "" "You can create your own images as plain text files."
 
 dialogue "" "Just make sure they're inside the images/ directory."
 
-dialogue "" "To clear/hide an image, just use an image file name that doesn't exist, usually an empty string"
+dialogue "" "To clear/hide an image, simply use the command \"clearimage\"" 
 
 dialogue "" "So if you do this:
-image \"\""
+dialogue \"\" \"some dialogue\" clearimage" 
 
-dialogue "" "It should stop showing the image. Like that." image ""
+dialogue "" "It should stop showing the image when that dialogue is reached." 
+
+dialogue "" "Like that." clearimage
 
 choice "Back to menu" 1
 
@@ -167,7 +176,6 @@ scene 6
 dialogue "" "To set options, use:
 option \"<option>\" [option value]"
 dialogue "" "Here's the list of options:
-option curses      (sets visual novel to use curses ui - default)
 option nocurses    (sets visual novel to not use curses ui)
 option cps X       (sets characters per second to X - default=120)
 option dialogueheight X      (sets dialogue window height to X - default=6)"
@@ -182,20 +190,27 @@ vne sample-scripts/mystery"
 dialogue "" "Your script should follow the same format you've seen here."
 dialogue "" "If ran without any arguments, this tutorial will play by default."
 
-dialogue "" "You can also overwrite options on the command line"
-dialogue "" "For example,
+dialogue "" "You can also use the option -nocurses on the command line
+to force a simple and minimalistic non-curses ui. For example:
+
 vne -nocurses
-to run this tutorial without the curses ui."
-dialogue "" "Here's the list of options:
--curses - force curses ui
--nocurses - force disable curses ui"
+
+This will run this tutorial without the curses ui.
+
+In this mode, some features like history, fancy escape sequences, and autoplay will not work."
 
 choice "Back to menu" 1
 
 scene 8
 dialogue "" "You can use \"\\\" to do some cool text magic, not only to newline with \"\\n\""
 dialogue "" "You can make text\w400 \bbold\b\w400, \iitalic\i\w400, \b\ibold-italic\b\i\w400, \c1c\c2o\c3l\c4o\c5r\c6f\c1u\c2l\c-1, and even \w400d\w400e\w400l\w400a\w400y\w400 characters"
-dialogue "" "This only works on curses mode"
+
+dialogue "" "This only works on curses mode. On non-curses mode, it would show only the raw text, like this:
+
+You can make text bold, italic, bold-italic, colorful, and even delay characters"
+
+dialogue "" "Also, if you're on curses mode but it still doesn't work, it could be because your terminal doesn't support it."
+
 dialogue "" "This is how it looks like under the hood:
 
 You can make text\\w400 \\bbold\\b\\w400, \\iitalic\\i\\w400, \\b\\ibold-italic\\b\\i\\w400, \\c1c\\c2o\\c3l\\c4o\\c5r\\c6f\\c1u\\c2l\\c-1, and even \\w400d\\w400e\\w400l\\w400a\\w400y\\w400 characters

@@ -109,17 +109,19 @@ void choose(VisualNovel* vn) {
 
 	Scene* scene = NULL;
 
-	if (vn->currentChoice == NULL) {
-		for (scene = vn->currentScene + 1; !isEndingScene(vn, scene); ++scene) {
-			if (!isEmptyScene(vn, scene)) { break; }
-		}
-	} else {
+	if (vn->currentChoice != NULL) {
 		vn->flags = appendFlags(vn->flags, vn->currentChoice->flagsToSet);
 		vn->flags = deleteFlags(vn->flags, vn->currentChoice->flagsToUnset);
 		scene = vn->currentChoice->scene;
 	}
 
-	if (isEndingScene(vn, scene) || isEmptyScene(vn, scene)) { scene = NULL; }
+	if (scene == NULL) {
+		for (scene = vn->currentScene + 1; !isEndingScene(vn, scene); ++scene) {
+			if (!isEmptyScene(vn, scene)) { break; }
+		}
+	}
+
+	if (isEndingScene(vn, scene)) { scene = NULL; }
 
 	setScene(vn, scene);
 }

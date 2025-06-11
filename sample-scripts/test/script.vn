@@ -86,9 +86,9 @@ choice "Go back" 5
 scene 7
 dialogue "" "Here's an image"
 dialogue "" "Image shown" image "test"
-dialogue "" "Image cleared" image ""
+dialogue "" "Image cleared" clearimage
 dialogue "" "Large image shown, try resizing terminal or lowering the font size" image "large"
-dialogue "" "Image cleared" image ""
+dialogue "" "Image cleared" clearimage
 choice "Next" 8
 
 scene 8

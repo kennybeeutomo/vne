@@ -7,14 +7,12 @@
 void parseOpts(VisualNovel* vn, const char* arg) {
 	if (eq(arg, "-nocurses")) {
 		vn->cursesMode = false;
-		return;
+	} else
+
+	{
+		fprintf(stderr, "Invalid option\n");
+		exit(1);
 	}
-	if (eq(arg, "-curses")) {
-		vn->cursesMode = true;
-		return;
-	}
-	fprintf(stderr, "Invalid option\n");
-	exit(1);
 }
 
 void parseArgs(VisualNovel* vn, int argc, char** argv) {
