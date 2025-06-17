@@ -109,6 +109,10 @@ void loadVisualNovel(VisualNovel* vn) {
 			getInt(file, &sceneId);
 		} else
 
+		if (eq(command, "ending")) {
+			vn->scenes[sceneId].isEnd = true;
+		} else
+
 		if (eq(command, "dialogue")) {
 			char speaker[SPEAKER_SIZE];
 			char text[TEXT_SIZE];

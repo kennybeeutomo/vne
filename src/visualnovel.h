@@ -22,6 +22,7 @@ typedef enum {
 typedef struct Scene {
 	Dialogue* dialogues;
 	Choice* choices;
+	bool isEnd;
 } Scene;
 
 typedef struct VisualNovel {

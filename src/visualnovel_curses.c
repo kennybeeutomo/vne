@@ -294,6 +294,9 @@ void startVisualNovelCurses(VisualNovel* vn) {
 	setScene(vn, &vn->scenes[0]);
 	while (vn->currentScene != NULL) {
 		printDialoguesCurses(vn);
+		if (vn->currentScene->isEnd) {
+			break;
+		}
 		chooseMenuCurses(vn);
 	}
 

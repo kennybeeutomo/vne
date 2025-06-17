@@ -207,6 +207,9 @@ void startVisualNovel(VisualNovel* vn) {
 	setScene(vn, &vn->scenes[0]);
 	while (vn->currentScene != NULL) {
 		printDialogues(vn);
+		if (vn->currentScene->isEnd) {
+			break;
+		}
 		choiceMenu(vn);
 	}
 
