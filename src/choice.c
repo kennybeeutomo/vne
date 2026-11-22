@@ -2,11 +2,12 @@
 #include "flag.h"
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
-Choice* initChoice(char text[CHOICE_SIZE], Scene* scene) {
+Choice* initChoice(wchar_t text[CHOICE_SIZE], Scene* scene) {
 	Choice* choice = malloc(sizeof(Choice));
-	strcpy(choice->text, text);
-	strcpy(choice->requiredFlags, "");
+	wcscpy(choice->text, text);
+	memset(choice->requiredFlags, 0, sizeof(choice->requiredFlags));
 	choice->flagsToUnset = NULL;
 	choice->flagsToSet = NULL;
 	choice->next = NULL;
@@ -33,7 +34,8 @@ Choice* tailChoice(Choice* choice) {
 	if (choice == NULL) {
 		return NULL;
 	}
-	while (choice->next != NULL) choice = choice->next;
+	while (choice->next != NULL)
+		choice = choice->next;
 	return choice;
 }
 
@@ -89,7 +91,7 @@ Choice* getLastChoice(Choice* choices, Flag* flags) {
 	return last;
 }
 
-Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
+Choice* appendChoice(Choice* choices, wchar_t text[CHOICE_SIZE], Scene* scene) {
 	Choice* newChoice = initChoice(text, scene);
 
 	if (choices == NULL) {
@@ -97,7 +99,8 @@ Choice* appendChoice(Choice* choices, char text[CHOICE_SIZE], Scene* scene) {
 	}
 
 	Choice* curr = choices;
-	while (curr->next != NULL) curr = curr->next;
+	while (curr->next != NULL)
+		curr = curr->next;
 	curr->next = newChoice;
 	newChoice->prev = curr;
 
@@ -125,7 +128,7 @@ Choice* freeChoices(Choice* choice) {
 Choice* copyChoices(Choice* from, Choice* to) {
 	while (from != NULL) {
 		to = appendChoice(to, from->text, from->scene);
-		strcpy(to->requiredFlags, from->requiredFlags);
+		wcscpy(to->requiredFlags, from->requiredFlags);
 		to->flagsToSet = appendFlags(to->flagsToSet, from->flagsToSet);
 		to->flagsToUnset = appendFlags(to->flagsToUnset, from->flagsToUnset);
 		from = from->next;
@@ -133,14 +136,14 @@ Choice* copyChoices(Choice* from, Choice* to) {
 	return to;
 }
 
-void requireChoiceFlag(Choice* choice, char flag[DEFAULT_STRING_SIZE]) {
-	strcpy(choice->requiredFlags, flag);
+void requireChoiceFlag(Choice* choice, wchar_t flag[DEFAULT_STRING_SIZE]) {
+	wcscpy(choice->requiredFlags, flag);
 }
 
-void setFlag(Choice* choice, char flag[FLAG_SIZE]) {
+void setFlag(Choice* choice, wchar_t flag[FLAG_SIZE]) {
 	choice->flagsToSet = appendFlag(choice->flagsToSet, flag);
 }
 
-void unsetFlag(Choice* choice, char flag[FLAG_SIZE]) {
+void unsetFlag(Choice* choice, wchar_t flag[FLAG_SIZE]) {
 	choice->flagsToUnset = appendFlag(choice->flagsToUnset, flag);
 }

@@ -3,26 +3,27 @@
 #include "config.h"
 #include "dialogue.h"
 #include "flag.h"
+#include "image.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 VisualNovel initVN() {
-	VisualNovel vn = {
-		.scenes = {},
-		.flags = NULL,
-		.currentScene = NULL,
-		.currentDialogue = NULL,
-		.currentChoice = NULL,
-		.currentImage = {},
-		.history = NULL,
-		.path = DEFAULT_SCRIPT_PATH,
-		.cursesMode = CURSES_MODE,
-		.cps = DEFAULT_CPS,
-		.dialogueWindowHeight = DEFAULT_DIALOGUE_WINDOW_HEIGHT,
-		.autoplay = false,
-	};
+	VisualNovel vn = {.scenes = {},
+	                  .flags = NULL,
+	                  .currentScene = NULL,
+	                  .currentDialogue = NULL,
+	                  .currentChoice = NULL,
+	                  .images = {},
+	                  .history = NULL,
+	                  .path = DEFAULT_SCRIPT_PATH,
+	                  .cursesMode = CURSES_MODE,
+	                  .cps = DEFAULT_CPS,
+	                  .dialogueWindowHeight = DEFAULT_DIALOGUE_WINDOW_HEIGHT,
+	                  .autoplay = false,
+	                  .transparentCharacter = DEFAULT_TRANSPARENT_CHARACTER};
 	return vn;
 }
 
@@ -31,63 +32,72 @@ void endVN(VisualNovel* vn) {
 	exit(0);
 }
 
-Dialogue* addDialogue(VisualNovel* vn, int sceneId, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
+Dialogue* addDialogue(VisualNovel* vn, int sceneId, wchar_t speaker[SPEAKER_SIZE], wchar_t text[TEXT_SIZE]) {
 	Dialogue* dialogue = appendDialogue(vn->scenes[sceneId].dialogues, speaker, text);
 	vn->scenes[sceneId].dialogues = dialogue;
 	return tailDialogue(dialogue);
 }
 
-Choice* addChoice(VisualNovel* vn, int sceneId, char text[CHOICE_SIZE], int destId) {
+Choice* addChoice(VisualNovel* vn, int sceneId, wchar_t text[CHOICE_SIZE], int destId) {
 	Choice* choice = appendChoice(vn->scenes[sceneId].choices, text, &vn->scenes[destId]);
 	vn->scenes[sceneId].choices = choice;
 	return tailChoice(choice);
 }
 
-void addImage(Dialogue* dialogue, char image[IMAGE_SIZE]) {
-	strcpy(dialogue->image, image);
+void addImage(Dialogue* dialogue, Image image) {
+	memcpy(&dialogue->images[image.zOrder], &image, sizeof(Image));
 }
 
 void addDialogueToHistory(VisualNovel* vn) {
-	if (vn->currentDialogue == NULL) { return; }
-	char text[TEXT_SIZE];
-	strcpy(text, vn->currentDialogue->text);
+	if (vn->currentDialogue == NULL) {
+		return;
+	}
+	wchar_t text[TEXT_SIZE];
+	wcscpy(text, vn->currentDialogue->text);
 	removeSequences(text);
 	vn->history = prependDialogue(vn->history, vn->currentDialogue->speaker, text);
 }
 
 void addChoiceToHistory(VisualNovel* vn) {
-	if (vn->currentChoice == NULL) { return; }
-	char speaker[SPEAKER_SIZE] = "You chose";
-	char text[TEXT_SIZE]; strcpy(text, vn->currentChoice->text);
+	if (vn->currentChoice == NULL) {
+		return;
+	}
+	wchar_t speaker[SPEAKER_SIZE] = L"You chose";
+	wchar_t text[TEXT_SIZE];
+	wcscpy(text, vn->currentChoice->text);
 	vn->history = prependDialogue(vn->history, speaker, text);
 }
 
-void removeSequences(char* str) {
-	char temp[TEXT_SIZE];
-	memset(temp, 0, TEXT_SIZE);
+void removeSequences(wchar_t* str) {
+	wchar_t temp[TEXT_SIZE];
+	memset(temp, 0, sizeof(temp));
 	int j = 0;
 	for (int i = 0; str[i] != '\0'; ++i) {
 		if (str[i] == '\\') {
 			switch (str[++i]) {
-				case 'w': case 'c':
+				case 'w':
+				case 'c':
 					i = skipNumbers(++i, str);
 					i--;
 					continue;
-				case 'b': case 'i':
+				case 'b':
+				case 'i':
 					continue;
 			}
 		}
 		temp[j++] = str[i];
 	}
-	strcpy(str, temp);
+	wcscpy(str, temp);
 }
 
 bool isEndingScene(VisualNovel* vn, Scene* scene) {
-	return scene == &vn->scenes[SCENES_MAX-1];
+	return scene == &vn->scenes[SCENES_MAX - 1];
 }
 
 bool isEmptyScene(VisualNovel* vn, Scene* scene) {
-	if (scene == NULL) { return true; }
+	if (scene == NULL) {
+		return true;
+	}
 	Dialogue* dialogue = getFirstDialogue(scene->dialogues, vn->flags);
 	Choice* choice = getFirstChoice(scene->choices, vn->flags);
 	return dialogue == NULL && choice == NULL;
@@ -100,7 +110,9 @@ void freeScene(Scene* scene) {
 
 void setScene(VisualNovel* vn, Scene* scene) {
 	vn->currentScene = scene;
-	if (scene == NULL) { return; }
+	if (scene == NULL) {
+		return;
+	}
 	vn->currentDialogue = getFirstDialogue(scene->dialogues, vn->flags);
 	vn->currentChoice = getFirstChoice(scene->choices, vn->flags);
 }
@@ -117,22 +129,26 @@ void choose(VisualNovel* vn) {
 
 	if (scene == NULL) {
 		for (scene = vn->currentScene + 1; !isEndingScene(vn, scene); ++scene) {
-			if (!isEmptyScene(vn, scene)) { break; }
+			if (!isEmptyScene(vn, scene)) {
+				break;
+			}
 		}
 	}
 
-	if (isEndingScene(vn, scene)) { scene = NULL; }
+	if (isEndingScene(vn, scene)) {
+		scene = NULL;
+	}
 
 	setScene(vn, scene);
 }
 
-void getImagePath(char imagePath[PATH_MAX], VisualNovel* vn, char image[IMAGE_SIZE]) {
+void getImagePath(char imagePath[PATH_MAX], VisualNovel* vn, Image image) {
 	strcpy(imagePath, vn->path);
 	strcat(imagePath, "/images/");
-	strcat(imagePath, image);
+	strcat(imagePath, image.imagePath);
 }
 
-void printImage(VisualNovel* vn, char image[IMAGE_SIZE]) {
+void printImage(VisualNovel* vn, Image image) {
 	char imagePath[PATH_MAX];
 	getImagePath(imagePath, vn, image);
 
@@ -140,9 +156,9 @@ void printImage(VisualNovel* vn, char image[IMAGE_SIZE]) {
 	if (file == NULL) {
 		return;
 	}
-	char text[DEFAULT_STRING_SIZE];
-	while (fgets(text, DEFAULT_STRING_SIZE, file) != NULL) {
-		printf("%s", text);
+	wchar_t text[DEFAULT_STRING_SIZE];
+	while (fgetws(text, DEFAULT_STRING_SIZE, file) != NULL) {
+		printf("%ls", text);
 	}
 	fclose(file);
 }
@@ -150,16 +166,20 @@ void printImage(VisualNovel* vn, char image[IMAGE_SIZE]) {
 void printDialogue(VisualNovel* vn) {
 	Dialogue* dialogue = vn->currentDialogue;
 
-	if (dialogue == NULL) { return; }
+	if (dialogue == NULL) {
+		return;
+	}
 
-	printImage(vn, vn->currentDialogue->image);
+	for (int i = 0; i < IMAGE_CAPACITY; ++i) {
+		printImage(vn, vn->currentDialogue->images[i]);
+	}
 
 	if (notnullstr(vn->currentDialogue->speaker)) {
-		printf("%s: ", vn->currentDialogue->speaker);
+		printf("%ls: ", vn->currentDialogue->speaker);
 	}
 
 	removeSequences(dialogue->text);
-	printf("%s\n", dialogue->text);
+	printf("%ls\n", dialogue->text);
 }
 
 void printDialogues(VisualNovel* vn) {
@@ -167,7 +187,9 @@ void printDialogues(VisualNovel* vn) {
 	Dialogue* last = getLastDialogue(head, vn->flags);
 	while (1) {
 		printDialogue(vn);
-		if (vn->currentDialogue == last) { break; }
+		if (vn->currentDialogue == last) {
+			break;
+		}
 		getchar();
 		vn->currentDialogue = nextDialogue(vn->currentDialogue, vn->flags);
 	}
@@ -177,7 +199,7 @@ void printChoices(VisualNovel* vn) {
 	int i = 1;
 	Choice* curr = getFirstChoice(vn->currentScene->choices, vn->flags);
 	while (curr != NULL) {
-		printf("%d. %s\n", i++, curr->text);
+		printf("%d. %ls\n", i++, curr->text);
 		curr = nextChoice(curr, vn->flags);
 	}
 }
@@ -188,7 +210,8 @@ void choiceMenu(VisualNovel* vn) {
 	if (vn->currentChoice != NULL) {
 		do {
 			printChoices(vn);
-			scanf("%d", &choice); getchar();
+			scanf("%d", &choice);
+			getchar();
 			vn->currentChoice = choiceAt(vn->currentScene->choices, vn->flags, choice);
 		} while (vn->currentChoice == NULL);
 	} else {

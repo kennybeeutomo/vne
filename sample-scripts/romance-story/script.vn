@@ -1,0 +1,339 @@
+# Script is AI Generated
+# Images are AI generated then turned into ascii art
+
+# ============================================================
+#  "The Hour Before Four"
+#  A romance VNE script with satisfaction scores.
+#  Try to impress her!
+# ============================================================
+
+option "cps" 32
+option "dialogueheight" 4
+
+# ---------------- SCENE 0 : two minutes early ----------------
+scene 0
+dialogue "" "Saturday, 2:12. The corner café is half full. Maya is already at the table, phone in hand, half her drink gone."
+clearallimages
+image "bg_cafe" 0
+
+dialogue "" "She's early. She also looks like she's been awake since five."
+image "bg_cafe" 0
+
+dialogue "Ren" "Your table's the one with the woman staring at her phone like it owes her money."
+image "ren_neutral" 1
+
+dialogue "You" "That's her. That's my date."
+image "ren_neutral" 1
+
+dialogue "Ren" "One thing first. She's been in here before. She tips too much and she hates being fussed over."
+image "ren_neutral" 1
+
+dialogue "You" "How do you know that?"
+image "ren_neutral" 1
+
+dialogue "Ren" "Because I'm a barista, and baristas know everything. Now go. She's been here eleven minutes."
+image "ren_smile" 1
+
+dialogue "" "You sit down. Maya looks up, and for a second her face does something complicated before it settles into a smile."
+clearallimages
+image "bg_cafe" 0
+image "maya_smile" 1
+
+dialogue "Maya" "You're two minutes early. That's a good sign."
+image "maya_smile" 1
+
+dialogue "" "The pause after that is exactly long enough that you have to fill it."
+image "maya_smile" 1
+
+choice "Ask if she slept badly — she looks tired" 1
+set "w1"
+
+choice "Tell her she looks really nice" 1
+set "c1a"
+
+choice "Apologise for being early and explain why" 1
+set "c1b"
+
+
+# ---------------- SCENE 1 : the week question ----------------
+scene 1
+dialogue "" "She wraps both hands around her cup and leans in, and the date properly starts."
+clearallimages
+image "bg_cafe" 0
+image "maya_smile" 1
+
+dialogue "Maya" "That obvious?"
+image "maya_concerned" 1
+if "w1"
+
+dialogue "Maya" "Five. My upstairs neighbour has a drum kit and no shame. I've heard the same four bars since Tuesday."
+image "maya_laugh" 1
+if "w1"
+
+dialogue "" "She puts her phone face-down on the table and leaves it there."
+image "maya_soft" 1
+if "w1"
+
+dialogue "Maya" "Oh. Thank you. Really."
+image "maya_smile" 1
+if "c1a"
+
+dialogue "" "She smooths her sleeve. Then she picks her phone back up and sets it face-up beside her cup."
+image "maya_smile" 1
+if "c1a"
+
+dialogue "Maya" "Two minutes is nothing. I was early too. I sat in my car for a bit deciding whether that was embarrassing."
+image "maya_soft" 1
+if "c1b"
+
+dialogue "Maya" "I do that every time. Arrive early, then panic about what it says about me."
+image "maya_soft" 1
+if "c1b"
+
+dialogue "" "She checks the time on her phone before she puts it away."
+image "maya_soft" 1
+if "c1b"
+
+dialogue "Maya" "Okay. Standard first-date question, but I actually want the answer: how was your week?"
+image "maya_smile" 1
+
+dialogue "" "She waits. She doesn't fill the silence for you."
+image "maya_smile" 1
+
+choice "Give her the version you'd tell a coworker" 2
+set "c2a"
+
+choice "Admit it was rough — you almost cancelled today" 2
+set "w2"
+
+choice "Answer in one word and ask about her week instead" 2
+set "c2b"
+
+
+# ---------------- SCENE 2 : the four o'clock problem ----------------
+scene 2
+dialogue "" "Behind the counter, Ren is pretending very hard not to watch."
+clearallimages
+image "bg_cafe_counter" 0
+image "ren_neutral" 1
+
+dialogue "Ren" "Refill? Or are you two doing the thing where you forget drinks exist?"
+image "ren_smile" 1
+
+dialogue "" "You both laugh at the same time, which is either a good sign or a coincidence."
+image "bg_cafe" 0
+image "maya_smile" 1
+
+dialogue "Maya" "Almost cancelled."
+image "maya_concerned" 1
+if "w2"
+
+dialogue "Maya" "But you didn't."
+image "maya_soft" 1
+if "w2"
+
+dialogue "Maya" "Mine was rough too. I'm not going to sit here and pretend it wasn't."
+image "maya_soft" 1
+if "w2"
+
+dialogue "Maya" "Sounds busy."
+image "maya_smile" 1
+if "c2a"
+
+dialogue "" "She says it kindly. Then she turns her cup a quarter turn and looks at the window instead of you."
+image "maya_smile" 1
+if "c2a"
+
+dialogue "Maya" "Fine."
+image "maya_soft" 1
+if "c2b"
+
+dialogue "Maya" "And mine was fine."
+image "maya_soft" 1
+if "c2b"
+
+dialogue "" "Neither of you says anything for a moment. The sugar dispenser becomes genuinely interesting."
+image "maya_soft" 1
+if "c2b"
+
+dialogue "Maya" "Okay, full disclosure: I have to be at the station by four. I should have led with that."
+image "maya_smile" 1
+
+dialogue "Ren" "Dessert's on the pass. The one with the thing on top. Twenty-five minutes, minimum."
+image "ren_smile" 1
+
+dialogue "" "It's 3:22. Maya looks at the clock, then at you, and waits."
+image "bg_cafe" 0
+image "maya_smile" 1
+
+choice "Ask for the check now and offer to walk her to the station" 3
+set "w3"
+
+choice "Tell her to stay — the dessert's basically already ordered" 3
+set "c3a"
+
+choice "Pay the bill quietly while she's talking and stand up" 3
+set "c3b"
+
+
+# ---------------- SCENE 3 : endings ----------------
+scene 3
+dialogue "" "The café door swings shut behind you. The street is bright and loud and she has her phone in her hand again."
+clearallimages
+image "bg_cafe" 0
+image "maya_soft" 1
+
+# --- 3 warm: she loved it ---
+dialogue "Maya" "You know what, I've got forty minutes. The station's ten minutes away if we walk slowly."
+image "maya_smile" 1
+if "w1 and w2 and w3"
+
+dialogue "You" "I thought you had somewhere to be."
+image "maya_smile" 1
+if "w1 and w2 and w3"
+
+dialogue "Maya" "I do. In forty minutes. I'm choosing to spend them badly."
+image "maya_laugh" 1
+if "w1 and w2 and w3"
+
+dialogue "" "You walk. She tells you about the drum kit neighbour and demonstrates the four bars on a bench. Neither of you mentions the station until you're standing in front of it."
+image "bg_park_path" 0
+image "maya_laugh" 1
+if "w1 and w2 and w3"
+
+dialogue "Maya" "Next Saturday. Same table. And this time bring the bad week — I want the whole thing."
+image "maya_soft" 1
+if "w1 and w2 and w3"
+
+dialogue "You" "Deal. I'll be two minutes early."
+image "maya_smile" 1
+if "w1 and w2 and w3"
+
+dialogue "" "She's still smiling through the glass when the train takes her."
+image "bg_station_night" 0
+clearimage 1
+if "w1 and w2 and w3"
+
+dialogue "" "You stand on the platform grinning at a timetable like an idiot."
+if "w1 and w2 and w3"
+
+dialogue "" "You got the best ending."
+
+# --- 2 warm, missing w3: she has to run, but she wants more ---
+dialogue "Maya" "I have to run. I'm sorry — I should have said about four o'clock at the start."
+image "maya_soft" 1
+if "w1 and w2 and not w3"
+
+dialogue "You" "I'd have talked your ear off either way."
+image "maya_laugh" 1
+if "w1 and w2 and not w3"
+
+dialogue "Maya" "That's the plan. Next week. I'll clear the whole afternoon and you can talk my ear off properly."
+image "maya_smile" 1
+if "w1 and w2 and not w3"
+
+dialogue "" "She hugs you goodbye — quick, one-armed, decided at the last second — and walks to the station without looking back."
+image "bg_cafe" 0
+image "maya_smile" 1
+if "w1 and w2 and not w3"
+
+dialogue "" "Your phone buzzes before you reach the corner: 'Tell Ren the dessert was a trap.'"
+if "w1 and w2 and not w3"
+
+dialogue "" "You got the second best ending 1/3."
+
+# --- 2 warm, missing w1: she liked you, but noticed the gap ---
+dialogue "Maya" "You never said a word about what I was wearing, by the way."
+image "maya_laugh" 1
+if "w2 and w3 and not w1"
+
+dialogue "You" "Was I supposed to?"
+image "maya_laugh" 1
+if "w2 and w3 and not w1"
+
+dialogue "Maya" "Most people do. I liked that you didn't."
+image "maya_soft" 1
+if "w2 and w3 and not w1"
+
+dialogue "Maya" "Ask me again. Next week. And tell me how your week actually was before I ask."
+image "maya_smile" 1
+if "w2 and w3 and not w1"
+
+dialogue "" "She's half a block away before you realise she never actually said yes."
+image "bg_cafe" 0
+if "w2 and w3 and not w1"
+
+dialogue "" "Your phone buzzes: 'That was a yes, by the way.'"
+if "w2 and w3 and not w1"
+
+dialogue "" "You got the second best ending 2/3."
+
+# --- 2 warm, missing w2: she wants in, but the door stayed shut ---
+dialogue "Maya" "I noticed you never told me about your week."
+image "maya_concerned" 1
+if "w1 and w3 and not w2"
+
+dialogue "You" "I asked about yours instead. I thought that was the polite move."
+image "maya_concerned" 1
+if "w1 and w3 and not w2"
+
+dialogue "Maya" "It was. It was also a door closing. I'm not good at being kept on the other side of a door."
+image "maya_soft" 1
+if "w1 and w3 and not w2"
+
+dialogue "Maya" "Next Saturday. I'll go first, then you. No changing the subject."
+image "maya_smile" 1
+if "w1 and w3 and not w2"
+
+dialogue "" "She says it like a condition, and then she smiles like it isn't one."
+if "w1 and w3 and not w2"
+
+dialogue "" "You got the second best ending 3/3."
+
+# --- 1 warm: polite fade ---
+dialogue "Maya" "This was nice. Genuinely."
+image "maya_smile" 1
+if "( w1 and not w2 and not w3 ) or ( w2 and not w1 and not w3 ) or ( w3 and not w1 and not w2 )"
+
+dialogue "You" "We should do this again."
+image "maya_smile" 1
+if "( w1 and not w2 and not w3 ) or ( w2 and not w1 and not w3 ) or ( w3 and not w1 and not w2 )"
+
+dialogue "Maya" "Yeah. Definitely. Sometime."
+image "maya_smile" 1
+if "( w1 and not w2 and not w3 ) or ( w2 and not w1 and not w3 ) or ( w3 and not w1 and not w2 )"
+
+dialogue "" "Neither of you suggests a day. She hugs you, which takes you both slightly by surprise, and then she's gone."
+image "bg_cafe" 0
+image "maya_soft" 1
+if "( w1 and not w2 and not w3 ) or ( w2 and not w1 and not w3 ) or ( w3 and not w1 and not w2 )"
+
+dialogue "" "You stand outside the café a minute longer than you need to, working out where it went sideways."
+if "( w1 and not w2 and not w3 ) or ( w2 and not w1 and not w3 ) or ( w3 and not w1 and not w2 )"
+
+dialogue "" "You got the second worst ending (Polite Fade)."
+
+# --- 0 warm: it's over ---
+dialogue "Maya" "I should get going. I've got a thing at four."
+image "maya_soft" 1
+if "not w1 and not w2 and not w3"
+
+dialogue "You" "I had a nice time."
+image "maya_soft" 1
+if "not w1 and not w2 and not w3"
+
+dialogue "Maya" "You're nice. Thanks for the coffee."
+image "maya_soft" 1
+if "not w1 and not w2 and not w3"
+
+dialogue "" "She says 'let's do this again sometime' in the exact tone people use when they won't. Then she's walking, phone already at her ear."
+image "bg_cafe" 0
+clearimage 1
+if "not w1 and not w2 and not w3"
+
+dialogue "" "The café clock says 3:41. You were on the street for six minutes."
+if "not w1 and not w2 and not w3"
+
+dialogue "" "You got the worst ending."
+
+ending

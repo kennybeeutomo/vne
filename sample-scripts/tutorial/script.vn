@@ -1,10 +1,12 @@
+# ------- START -------
 scene 0
-dialogue "" "Welcome to the Visual Novel Engine (VNE)!" image "title"
+dialogue "" "Welcome to the Visual Novel Engine (VNE)!" imageat "title" 0 30 3
 dialogue "" "This short interactive tutorial will show you how this engine works."
 dialogue "" "Let's start with a simple question."
 
+# ------- MAIN MENU -------
 scene 1
-dialogue "" "What would you like to do?" image "title"
+dialogue "" "What would you like to do?" imageat "title" 0 30 3
 
 choice "About VNE" 10
 choice "Learn about dialogue" 2
@@ -16,12 +18,14 @@ choice "How to run my own scripts?" 7
 choice "Learn about escape sequences" 8
 choice "Finish tutorial" 998
 
+# ------- ABOUT VNE -------
 scene 10
 dialogue "" "VNE is a terminal-based visual novel engine using the curses library. It accepts a script file as an input, and presents it in an interactive visual novel interface as an output. It's inspired by RenPy a little bit."
 dialogue "" "This tutorial will show you how to write your own scripts."
 dialogue "" "It uses graph as the main data structure, where a scene is a node, and its choices are its edges pointing to different scenes. A scene is just a group of sequential dialogues and choices. A visual novel is one big graph of interconnected scenes."
 choice "Back to menu" 1
 
+# ------- ABOUT DIALOGUE -------
 scene 2
 dialogue "" "Dialogue is the most basic element of a visual novel."
 dialogue "" "Use the command:
@@ -32,6 +36,7 @@ dialogue "" "Like this very message you're reading now!"
 
 choice "Back to menu" 1
 
+# ------- ABOUT CHOICES -------
 scene 3
 dialogue "" "Choices allow the player to influence the story."
 dialogue "" "Use the command:
@@ -58,6 +63,18 @@ dialogue \"\" \"dialogue\"
 scene 2
 dialogue \"\" \"dialogue\""
 
+dialogue "" "Alternatively, you can mark a scene as an ending scene by using the ending keyword."
+dialogue "" "In this example, scene 1 is marked as an ending scene, so after it ends, the visual novel ends, skipping scene 2.
+scene 0
+dialogue \"\" \"dialogue\"
+
+scene 1
+dialogue \"\" \"dialogue\"
+ending
+
+scene 2
+dialogue \"\" \"dialogue\""
+
 dialogue "" "You can reuse choices from other scenes by using the command:
 reuse \"<scene id whose choices to reuse>\"
 This will copy every choice from that scene to the current scene, including their flags and flag requirements"
@@ -75,6 +92,7 @@ reuse 0"
 
 choice "Back to menu" 1
 
+# ------- ABOUT FLAGS -------
 scene 4
 dialogue "" "Flags are powerful tools for branching logic."
 dialogue "" "Use:
@@ -140,48 +158,153 @@ choice "I understand flags!" 41 if "not understandsflags" set "understandsflags"
 choice "I don't get it..." 41 if "not understandsflags"
 choice "Back to menu" 1 unset "understandsflags"
 
+# ------- ABOUT IMAGES -------
 scene 5
+dialogue "" ""
+clearallimages
+choice "Displaying an image (Start here)" 51
+choice "Displaying multiple images using z-order" 52
+choice "Offsetting image positions" 53
+choice "Adding transparency to images" 54
+choice "Clearing images" 55
+choice "Back to menu" 1
+
+# ------- DISPLAYING IMAGE -------
+scene 51
 dialogue "" "Images let you display ASCII art before a dialogue line."
 
 dialogue "" "Use the command:
-dialogue \"<speaker>\" \"<text>\" image \"<image file name>\""
+dialogue \"<speaker>\" \"<text>\" image \"<image file name>\" <z-order>"
 
 dialogue "" "When this dialogue is reached, the engine will look for
 images/<image file name> and print its content first."
 
 dialogue "" "You should only use this on dialogue lines, not choices!"
 
-dialogue "" "Let's try it out with an image called 'test'."
+dialogue "" "Let's try it out with an image called 'arch_linux'."
 
-dialogue "" "If you saw a smiley face above, it worked!" image "test"
+dialogue "" "If you saw the arch linux logo above, it worked!" image "arch_linux" 0
 
 dialogue "" "If you can't see it clearly, try resizing the terminal."
+
+dialogue "" "Also, the image uses UTF-8 characters, so make sure your terminal supports it."
 
 dialogue "" "You can create your own images as plain text files."
 
 dialogue "" "Just make sure they're inside the images/ directory."
 
-dialogue "" "To clear/hide an image, simply use the command \"clearimage\"" 
+dialogue "" "Tip: use braille characters to fit more detail into your image. I recommend this website: https://lachlanarthur.github.io/Braille-ASCII-Art"
+choice "Next (Displaying multiple images using z-order)" 52
+choice "Back to menu" 1
+choice "About images" 5
 
-dialogue "" "So if you do this:
-dialogue \"\" \"some dialogue\" clearimage" 
+# ------- DISPLAYING MULTIPLE IMAGES -------
+scene 52
+dialogue "" "The <z-order> allows you to order how multiple images are displayed, starting from z-order 0.
+For example, to show a cafe room image in the background and a barista character image in the foreground:
+dialogue \"\" \"some dialogue\"
+image \"bg_cafe\" 0
+image \"barista\" 1"
+clearallimages
 
-dialogue "" "It should stop showing the image when that dialogue is reached." 
+dialogue "" "Let's try to simulate it!"
 
-dialogue "" "Like that." clearimage
+dialogue "" "image \"bg_cafe\" 0" image "bg_cafe" 0
+
+dialogue "" "image \"barista\" 1" image "barista" 1
+
+dialogue "" "As you can see, the barista image shows on top of the cafe image."
+
+dialogue "" "This is because barista has z-order 1, whereas bg_cafe has z-order 0, so bg_cafe is displayed first, then barista."
+choice "Next (Offsetting image positions)" 53
+choice "Back to menu" 1
+choice "About images" 5
+
+# ------- OFFSETTING IMAGE POSITIONS -------
+scene 53
+dialogue "" "By default, images are displayed starting at (0, 0)."
+clearallimages
+image "bg_cafe" 0
+image "barista" 1
+
+dialogue "" "You can offset image positions using:
+imageat \"<image file name>\" <z-order> <x> <y>"
+
+dialogue "" "For example, this would move the barista image 20 characters to the right, and 2 characters down, centering it:
+dialogue \"\" \"some dialogue\" imageat \"barista\" 1 20 2"
+
+dialogue "" "Like that" imageat "barista" 1 20 2
+
+choice "Next (Adding transparency to images)" 54
+choice "Back to menu" 1
+choice "About images" 5
+
+# ------- TRANSPARENT IMAGES -------
+scene 54
+dialogue "" "When we combine this image..."
+clearallimages
+image "bg_cafe" 0
+
+dialogue "" "...with this image..."
+clearallimages
+imageat "barista" 1 20 2
+
+dialogue "" "...we get this ugly image with space characters in the barista image overwriting the characters on the cafe background image."
+clearallimages
+image "bg_cafe" 0
+imageat "barista" 1 20 2
+
+dialogue "" "A solution to this is to reserve a special character so that when that character is about to be printed, it does not."
+
+dialogue "" "For example, if we use minus (-) as the special character, we can use it to paint surrounding empty areas we want to be transparent. (This means we can't use minus as a regular character anymore.)"
+
+dialogue "" "Like this" imageat "barista_minus" 1 20 2
+
+dialogue "" "So when the image is displayed, the minus characters should not."
+
+dialogue "" "Like that. Now the barista blends in with the background image" imageat "barista_transparent" 1 20 2
+
+dialogue "" "The default transparent character is backtick (`), but you can change it by setting the \"transparentcharacter\" option.
+For example:
+option \"transparentcharacter\" \"-\""
+
+choice "Next (Clearing images)" 55
+choice "Back to menu" 1
+choice "About images" 5
+
+# ------- CLEARING IMAGES -------
+scene 55
+dialogue "" "To clear/hide an image, simply use the command \"clearimage\" <z-order> to remove an image in that z-order."
+clearallimages
+image "bg_cafe" 0
+imageat "barista_transparent" 1 20 2
+
+dialogue "" "So if we do this:
+dialogue \"\" \"some dialogue\" clearimage 1"
+
+dialogue "" "It should stop showing the barista image when that dialogue is reached."
+
+dialogue "" "Like that." clearimage 1
+
+dialogue "" "To clear all images, use clearallimages. This dialogue uses it, so all images should be cleared now." clearallimages
 
 choice "Back to menu" 1
+choice "About images" 5
 
+
+# ------- ABOUT OPTIONS -------
 scene 6
 dialogue "" "To set options, use:
 option \"<option>\" [option value]"
 dialogue "" "Here's the list of options:
-option nocurses    (sets visual novel to not use curses ui)
-option cps X       (sets characters per second to X - default=120)
-option dialogueheight X      (sets dialogue window height to X - default=6)"
+option \"nocurses\"    (sets visual novel to not use curses ui)
+option \"cps\" X       (sets characters per second to X - default=120)
+option \"dialogueheight\" X      (sets dialogue window height to X - default=6)
+option \"transparentcharacter\" X      (sets the transparent character - default=`)"
 
 choice "Back to menu" 1
 
+# ------- HOW TO RUN -------
 scene 7
 dialogue "" "To run your own visual novel script, use the terminal:
 vne <path to script folder>"
@@ -201,8 +324,9 @@ In this mode, some features like history, fancy escape sequences, and autoplay w
 
 choice "Back to menu" 1
 
+# ------- ESCAPE SEQUENCES -------
 scene 8
-dialogue "" "You can use \"\\\" to do some cool text magic, not only to newline with \"\\n\""
+dialogue "" "You can use \"\\\" to do some cool text magic. (not just for newlining using \"\\n\".)"
 dialogue "" "You can make text\w400 \bbold\b\w400, \iitalic\i\w400, \b\ibold-italic\b\i\w400, \c1c\c2o\c3l\c4o\c5r\c6f\c1u\c2l\c-1, and even \w400d\w400e\w400l\w400a\w400y\w400 characters"
 
 dialogue "" "This only works on curses mode. On non-curses mode, it would show only the raw text, like this:
@@ -234,6 +358,7 @@ As you can see,
 choice "Back to menu" 1
 
 
+# --------- END ---------
 scene 998
 dialogue "" "You've reached the end of the tutorial."
 dialogue "" "Thank you for trying out the Visual Novel Engine. Have fun creating stories!"

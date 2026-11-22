@@ -4,11 +4,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
-char TRUE[FLAG_SIZE] = "T";
-char FALSE[FLAG_SIZE] = "F";
+wchar_t TRUE[FLAG_SIZE] = L"T";
+wchar_t FALSE[FLAG_SIZE] = L"F";
 
-Flag* push(Flag* flag, char name[FLAG_SIZE]) {
+Flag* push(Flag* flag, wchar_t name[FLAG_SIZE]) {
 	Flag* newFlag = initFlag(name);
 	if (flag == NULL) {
 		return newFlag;
@@ -18,7 +19,7 @@ Flag* push(Flag* flag, char name[FLAG_SIZE]) {
 	return newFlag;
 }
 
-Flag* append(Flag* flag, char name[FLAG_SIZE]) {
+Flag* append(Flag* flag, wchar_t name[FLAG_SIZE]) {
 	Flag* newFlag = initFlag(name);
 
 	if (flag == NULL) {
@@ -44,7 +45,7 @@ Flag* pop(Flag* flag) {
 	return temp;
 }
 
-bool findFlag(Flag* flag, char name[FLAG_SIZE]) {
+bool findFlag(Flag* flag, wchar_t name[FLAG_SIZE]) {
 	if (nullstr(name)) {
 		return true;
 	}
@@ -57,18 +58,19 @@ bool findFlag(Flag* flag, char name[FLAG_SIZE]) {
 	return false;
 }
 
-Flag* tokenize(const char expression[DEFAULT_STRING_SIZE]) {
+Flag* tokenize(const wchar_t expression[DEFAULT_STRING_SIZE]) {
 	Flag* flags = NULL;
 
-	char temp[DEFAULT_STRING_SIZE];
-	strcpy(temp, expression);
+	wchar_t temp[DEFAULT_STRING_SIZE];
+	wcscpy(temp, expression);
 
-	char delimiters[] = " \n\r\t\v\f";
-	char* word = strtok(temp, delimiters);
+	wchar_t delimiters[] = L" \n\r\t\v\f";
+	wchar_t* buffer;
+	wchar_t* word = wcstok(temp, delimiters, &buffer);
 
 	while (word != NULL) {
 		flags = append(flags, word);
-		word = strtok(NULL, delimiters);
+		word = wcstok(NULL, delimiters, &buffer);
 	}
 
 	return flags;
@@ -79,11 +81,11 @@ Flag* postfix(Flag* flags) {
 	Flag* postfix = NULL;
 
 	while (flags != NULL) {
-		if (eq(flags->name, "not")) {
+		if (eq(flags->name, L"not")) {
 			stack = push(stack, flags->name);
 
-		} else if (eq(flags->name, "and") || eq(flags->name, "or")) {
-			if (stack == NULL || eq(stack->name, "(")) {
+		} else if (eq(flags->name, L"and") || eq(flags->name, L"or")) {
+			if (stack == NULL || eq(stack->name, L"(")) {
 				stack = push(stack, flags->name);
 			} else {
 				postfix = append(postfix, stack->name);
@@ -91,16 +93,16 @@ Flag* postfix(Flag* flags) {
 				stack = push(stack, flags->name);
 			}
 
-		} else if (eq(flags->name, "(")) {
+		} else if (eq(flags->name, L"(")) {
 			stack = push(stack, flags->name);
 
-		} else if (eq(flags->name, ")")) {
+		} else if (eq(flags->name, L")")) {
 			while (1) {
 				if (stack == NULL) {
 					freeFlags(flags);
 					return NULL;
 				}
-				if (eq(stack->name, "(")) {
+				if (eq(stack->name, L"(")) {
 					break;
 				}
 				postfix = append(postfix, stack->name);
@@ -126,15 +128,10 @@ Flag* postfix(Flag* flags) {
 void substitute(Flag* flags, Flag* flagsToSubstitute) {
 	Flag* curr = flagsToSubstitute;
 	while (curr != NULL) {
-		if (!(
-			eq(curr->name, "and") ||
-			eq(curr->name, "or") ||
-			eq(curr->name, "not") ||
-			eq(curr->name, "(") ||
-			eq(curr->name, ")")
-		)) {
+		if (!(eq(curr->name, L"and") || eq(curr->name, L"or") || eq(curr->name, L"not") || eq(curr->name, L"(") ||
+		      eq(curr->name, L")"))) {
 			bool result = findFlag(flags, curr->name);
-			strcpy(curr->name, result ? TRUE : FALSE);
+			wcscpy(curr->name, result ? TRUE : FALSE);
 		}
 		curr = curr->next;
 	}
@@ -144,19 +141,34 @@ Flag* evaluate(Flag* postfix) {
 	Flag* stack = NULL;
 
 	while (postfix != NULL) {
-		if (eq(postfix->name, "and")) {
+		if (eq(postfix->name, L"and")) {
 			bool result = eq(stack->name, TRUE) && eq(stack->next->name, TRUE);
-			if (stack == NULL) { return NULL; } stack = pop(stack);
-			if (stack == NULL) { return NULL; } stack = pop(stack);
+			if (stack == NULL) {
+				return NULL;
+			}
+			stack = pop(stack);
+			if (stack == NULL) {
+				return NULL;
+			}
+			stack = pop(stack);
 			stack = push(stack, result ? TRUE : FALSE);
-		} else if (eq(postfix->name, "or")) {
+		} else if (eq(postfix->name, L"or")) {
 			bool result = eq(stack->name, TRUE) || eq(stack->next->name, TRUE);
-			if (stack == NULL) { return NULL; } stack = pop(stack);
-			if (stack == NULL) { return NULL; } stack = pop(stack);
+			if (stack == NULL) {
+				return NULL;
+			}
+			stack = pop(stack);
+			if (stack == NULL) {
+				return NULL;
+			}
+			stack = pop(stack);
 			stack = push(stack, result ? TRUE : FALSE);
-		} else if (eq(postfix->name, "not")) {
+		} else if (eq(postfix->name, L"not")) {
 			bool result = eq(stack->name, FALSE);
-			if (stack == NULL) { return NULL; } stack = pop(stack);
+			if (stack == NULL) {
+				return NULL;
+			}
+			stack = pop(stack);
 			stack = push(stack, result ? TRUE : FALSE);
 		} else {
 			stack = push(stack, postfix->name);
@@ -175,7 +187,7 @@ Flag* evaluate(Flag* postfix) {
 	return stack;
 }
 
-int evaluateFlags(Flag* flags, const char requiredFlags[DEFAULT_STRING_SIZE]) {
+int evaluateFlags(Flag* flags, const wchar_t requiredFlags[DEFAULT_STRING_SIZE]) {
 	if (nullstr(requiredFlags)) {
 		return true;
 	}

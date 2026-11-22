@@ -2,18 +2,19 @@
 #include "config.h"
 #include "utils.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 
-Flag* initFlag(char name[FLAG_SIZE]) {
+Flag* initFlag(wchar_t name[FLAG_SIZE]) {
 	Flag* flag = malloc(sizeof(Flag));
-	strcpy(flag->name, name);
+	wcscpy(flag->name, name);
 	flag->next = NULL;
 	return flag;
 }
 
-Flag* appendFlag(Flag* flag, char name[FLAG_SIZE]) {
+Flag* appendFlag(Flag* flag, wchar_t name[FLAG_SIZE]) {
 	if (nullstr(name)) {
 		return flag;
 	}
@@ -41,8 +42,8 @@ Flag* appendFlag(Flag* flag, char name[FLAG_SIZE]) {
 	return flag;
 }
 
-Flag* deleteFlag(Flag* flag, char name[FLAG_SIZE]) {
-	if (eq(name, "*")) {
+Flag* deleteFlag(Flag* flag, wchar_t name[FLAG_SIZE]) {
+	if (eq(name, L"*")) {
 		return freeFlags(flag);
 	}
 
@@ -89,9 +90,9 @@ Flag* deleteFlags(Flag* flag, Flag* flagsToDelete) {
 	return flag;
 }
 
-bool isFlag(char flag[FLAG_SIZE]) {
+bool isFlag(wchar_t flag[FLAG_SIZE]) {
 	for (int i = 0; flag[i] != '\0'; ++i) {
-		if (!(isalnum(flag[i]) || flag[i] == '_')) {
+		if (!(iswalnum(flag[i]) || flag[i] == '_')) {
 			return false;
 		}
 	}

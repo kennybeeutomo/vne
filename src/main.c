@@ -1,11 +1,12 @@
-#include "visualnovel.h"
 #include "utils.h"
+#include "visualnovel.h"
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 void parseOpts(VisualNovel* vn, const char* arg) {
-	if (eq(arg, "-nocurses")) {
+	if (eqn(arg, "-nocurses")) {
 		vn->cursesMode = false;
 	} else
 
@@ -26,6 +27,8 @@ void parseArgs(VisualNovel* vn, int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+
+	setlocale(LC_ALL, "en_US.UTF-8");
 
 	VisualNovel visualNovel = initVN();
 

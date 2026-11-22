@@ -1,13 +1,15 @@
 #include "dialogue.h"
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
-Dialogue* initDialogue(char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
+Dialogue* initDialogue(wchar_t speaker[SPEAKER_SIZE], wchar_t text[TEXT_SIZE]) {
 	Dialogue* dialogue = malloc(sizeof(Dialogue));
-	strcpy(dialogue->text, text);
-	strcpy(dialogue->speaker, speaker);
-	strcpy(dialogue->requiredFlags, "");
-	strcpy(dialogue->image, "");
+	wcscpy(dialogue->text, text);
+	wcscpy(dialogue->speaker, speaker);
+	memset(dialogue->requiredFlags, 0, sizeof(dialogue->requiredFlags));
+	memset(dialogue->images, 0, sizeof(dialogue->images));
 	dialogue->next = NULL;
 	dialogue->prev = NULL;
 	return dialogue;
@@ -17,7 +19,8 @@ Dialogue* tailDialogue(Dialogue* dialogue) {
 	if (dialogue == NULL) {
 		return NULL;
 	}
-	while (dialogue->next != NULL) dialogue = dialogue->next;
+	while (dialogue->next != NULL)
+		dialogue = dialogue->next;
 	return dialogue;
 }
 
@@ -57,7 +60,7 @@ Dialogue* getLastDialogue(Dialogue* dialogues, Flag* flags) {
 	return last;
 }
 
-Dialogue* prependDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
+Dialogue* prependDialogue(Dialogue* dialogue, wchar_t speaker[SPEAKER_SIZE], wchar_t text[TEXT_SIZE]) {
 	Dialogue* newDialogue = initDialogue(speaker, text);
 
 	if (dialogue == NULL) {
@@ -69,7 +72,7 @@ Dialogue* prependDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char t
 	return newDialogue;
 }
 
-Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char text[TEXT_SIZE]) {
+Dialogue* appendDialogue(Dialogue* dialogue, wchar_t speaker[SPEAKER_SIZE], wchar_t text[TEXT_SIZE]) {
 	Dialogue* newDialogue = initDialogue(speaker, text);
 
 	if (dialogue == NULL) {
@@ -77,7 +80,8 @@ Dialogue* appendDialogue(Dialogue* dialogue, char speaker[SPEAKER_SIZE], char te
 	}
 
 	Dialogue* curr = dialogue;
-	while (curr->next != NULL) curr = curr->next;
+	while (curr->next != NULL)
+		curr = curr->next;
 	newDialogue->prev = curr;
 	curr->next = newDialogue;
 
@@ -95,6 +99,6 @@ Dialogue* freeDialogues(Dialogue* dialogue) {
 	return NULL;
 }
 
-void requireDialogueFlag(Dialogue* dialogue, char flag[DEFAULT_STRING_SIZE]) {
-	strcpy(dialogue->requiredFlags, flag);
+void requireDialogueFlag(Dialogue* dialogue, wchar_t flag[DEFAULT_STRING_SIZE]) {
+	wcscpy(dialogue->requiredFlags, flag);
 }

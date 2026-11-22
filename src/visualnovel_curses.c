@@ -1,22 +1,24 @@
 #include "choice.h"
 #include "config.h"
 #include "dialogue.h"
-#include "visualnovel.h"
+#include "image.h"
 #include "utils.h"
+#include "visualnovel.h"
 #include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 void printHelp() {
-	const char helpText[] = "WASD/HJKL - Navigation\n"
-	                        "Q - Quit\n"
-	                        "Space/Enter - Confirm\n"
-	                        "P - Toggle Autoplay\n"
-	                        "G - Show History\n"
-	                        "\nPress any key to continue...";
-	const char helpTitle[] = "[ Controls ]";
+	const wchar_t helpText[] = L"WASD/HJKL - Navigation\n"
+	                           "Q - Quit\n"
+	                           "Space/Enter - Confirm\n"
+	                           "P - Toggle Autoplay\n"
+	                           "G - Show History\n"
+	                           "\nPress any key to continue...";
+	const wchar_t helpTitle[] = L"[ Controls ]";
 
 	WINDOW* win = printTempWindow(helpTitle, helpText, 37, -1);
 
@@ -36,12 +38,12 @@ void printHistory(VisualNovel* vn) {
 	int width = getmaxx(stdscr) * 0.9 - 2;
 	int height = getmaxy(stdscr) * 0.9 - 2;
 
-	char text[width * height];
+	wchar_t text[width * height];
 
 	while (1) {
 		memset(text, 0, sizeof(text));
 		getHistoryText(history, text, width, height);
-		WINDOW* win = printTempWindow("[ History ]", text, width + 2, height + 2);
+		WINDOW* win = printTempWindow(L"[ History ]", text, width + 2, height + 2);
 
 		Input input = getInput(win);
 		wclear(win);
@@ -60,7 +62,7 @@ void printHistory(VisualNovel* vn) {
 	refresh();
 }
 
-void printImageCurses(VisualNovel* vn, char image[IMAGE_SIZE]) {
+void printImageCurses(VisualNovel* vn, Image image) {
 	char imagePath[PATH_MAX];
 	getImagePath(imagePath, vn, image);
 
@@ -68,10 +70,15 @@ void printImageCurses(VisualNovel* vn, char image[IMAGE_SIZE]) {
 	if (file == NULL) {
 		return;
 	}
-	char text[DEFAULT_STRING_SIZE];
+	wchar_t text[DEFAULT_STRING_SIZE];
 	attron(COLOR_PAIR(7));
-	while (fgets(text, DEFAULT_STRING_SIZE, file) != NULL) {
-		addstr(text);
+	for (int i = 0; fgetws(text, DEFAULT_STRING_SIZE, file) != NULL; ++i) {
+		for (int j = 0; !wcschr(L"\n\r\0", text[j]); ++j) {
+			if (text[j] == (wchar_t)vn->transparentCharacter) {
+				continue;
+			}
+			mvprintw(i + image.y, j + image.x, "%lc", text[j]);
+		}
 	}
 	attroff(COLOR_PAIR(7));
 	fclose(file);
@@ -90,11 +97,20 @@ void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory) {
 
 	int y = getmaxy(stdscr) - dialogueWindowHeight;
 
-	if (dialogue != NULL && notnullstr(dialogue->image)) {
-		strcpy(vn->currentImage, dialogue->image);
+	if (dialogue != NULL) {
+		for (int i = 0; i < IMAGE_CAPACITY; ++i) {
+			if (dialogue->images[i].clear) {
+				memset(&vn->images[i], 0, sizeof(Image));
+			}
+			if (notnullstr(dialogue->images[i].imagePath)) {
+				memcpy(&vn->images[i], &dialogue->images[i], sizeof(Image));
+			}
+		}
 	}
 
-	printImageCurses(vn, vn->currentImage);
+	for (int i = 0; i < IMAGE_CAPACITY; ++i) {
+		printImageCurses(vn, vn->images[i]);
+	}
 
 	attron(COLOR_PAIR(4));
 	mvhline(y, 0, 0, getmaxx(stdscr));
@@ -103,7 +119,7 @@ void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory) {
 	fill(y + 1, 0, vn->dialogueWindowHeight, getmaxx(stdscr), ' ');
 
 	if (dialogue != NULL && notnullstr(dialogue->speaker)) {
-		mvprintw(y, 3, "[ %s ]", dialogue->speaker);
+		mvprintw(y, 3, "[ %ls ]", dialogue->speaker);
 	}
 
 	if (vn->autoplay) {
@@ -111,60 +127,81 @@ void printDialogueCurses(VisualNovel* vn, bool instant, bool saveToHistory) {
 		mvprintw(y, getmaxx(stdscr) - strlen(autoplayText), "%s", autoplayText);
 	}
 
-	if (vn->currentDialogue == NULL) { return; }
+	if (vn->currentDialogue == NULL) {
+		return;
+	}
 
 	bool isBold = false, isItalic = false;
 
-	int interval = instant ? 0 : 1000/vn->cps;
+	int interval = instant ? 0 : 1000 / vn->cps;
 
 	Input input = Invalid;
 
 	move(y + 1, 0);
 	for (int i = 0; dialogue->text[i] != '\0'; ++i) {
 		input = getInputVN(stdscr, vn);
-		if (input == Auto) { break; }
-		if (input != Invalid && input != NoInput) { interval = 0; }
+		if (input == Auto) {
+			break;
+		}
+		if (input != Invalid && input != NoInput) {
+			interval = 0;
+		}
 		if (dialogue->text[i] == '\\') {
 			i++;
 			if (dialogue->text[i] == 'w') {
 				i++;
 				int delay;
-				sscanf(&dialogue->text[i], "%d", &delay);
+				swscanf(&dialogue->text[i], L"%d", &delay);
 				i = skipNumbers(i, dialogue->text) - 1;
-				if (interval != 0) { napms(delay); }
+				if (interval != 0) {
+					napms(delay);
+				}
 				continue;
 			}
 			if (dialogue->text[i] == 'b') {
-				if (isBold) { attroff(A_BOLD); }
-				else { attron(A_BOLD); }
+				if (isBold) {
+					attroff(A_BOLD);
+				} else {
+					attron(A_BOLD);
+				}
 				isBold = !isBold;
 				continue;
 			}
 			if (dialogue->text[i] == 'i') {
-				if (isItalic) { attroff(A_ITALIC); }
-				else { attron(A_ITALIC); }
+				if (isItalic) {
+					attroff(A_ITALIC);
+				} else {
+					attron(A_ITALIC);
+				}
 				isItalic = !isItalic;
 				continue;
 			}
 			if (dialogue->text[i] == 'c') {
 				i++;
 				int color;
-				sscanf(&dialogue->text[i], "%d", &color);
+				swscanf(&dialogue->text[i], L"%d", &color);
 				i = skipNumbers(i, dialogue->text) - 1;
-				if (color == -1) { attroff(A_COLOR); }
-				else { attron(COLOR_PAIR(color)); }
+				if (color == -1) {
+					attroff(A_COLOR);
+				} else {
+					attron(COLOR_PAIR(color));
+				}
 				continue;
 			}
 		}
 
-		addch(dialogue->text[i]);
+		printw("%lc", dialogue->text[i]);
 		refresh();
 		napms(interval);
 	}
 
-	attroff(A_BOLD); attroff(A_ITALIC); attroff(A_COLOR);
+	attroff(A_BOLD);
+	attroff(A_ITALIC);
+	attroff(A_COLOR);
 
-	if (input == Auto) { printDialogueCurses(vn, true, false); }
+	if (input == Auto) {
+		printDialogueCurses(vn, true, false);
+	}
 }
 
 void printDialoguesCurses(VisualNovel* vn) {
@@ -180,11 +217,16 @@ void printDialoguesCurses(VisualNovel* vn) {
 
 		if (vn->autoplay) {
 			// Autoplay delay
-			int len = strlen(vn->currentDialogue->text);
+			int len = wcslen(vn->currentDialogue->text);
 			for (int i = 0; i < len; ++i) {
 				Input input = getInputVN(stdscr, vn);
-				if (input == Auto || input == Resize) { printDialogueCurses(vn, true, false); break; }
-				if (!isInvalid(input)) { break; }
+				if (input == Auto || input == Resize) {
+					printDialogueCurses(vn, true, false);
+					break;
+				}
+				if (!isInvalid(input)) {
+					break;
+				}
 				napms(AUTOPLAY_CHAR_DELAY);
 			}
 		} else {
@@ -192,10 +234,12 @@ void printDialoguesCurses(VisualNovel* vn) {
 			Input input = Invalid;
 			while (isInvalid(input) || input == Resize) {
 				input = getInputVN(stdscr, vn);
-				if (input == Resize) { printDialogueCurses(vn, true, false); }
+				if (input == Resize) {
+					printDialogueCurses(vn, true, false);
+				}
 				char endingIndicator[] = "->";
 				attron(A_BOLD);
-				mvaddstr(getmaxy(stdscr)-1, getmaxx(stdscr)-strlen(endingIndicator), endingIndicator);
+				mvaddstr(getmaxy(stdscr) - 1, getmaxx(stdscr) - strlen(endingIndicator), endingIndicator);
 				attroff(A_BOLD);
 				napms(DEBOUNCE_DURATION);
 			}
@@ -205,7 +249,9 @@ void printDialoguesCurses(VisualNovel* vn) {
 			break;
 		}
 
-		if (vn->currentDialogue == NULL) { break; }
+		if (vn->currentDialogue == NULL) {
+			break;
+		}
 		vn->currentDialogue = nextDialogue(vn->currentDialogue, vn->flags);
 	}
 }
@@ -227,7 +273,7 @@ void printChoicesCurses(VisualNovel* vn) {
 		}
 		y = printStr(stdscr, curr->text, y, 1, getmaxx(stdscr) - 1) + 1;
 		if (curr == vn->currentChoice) {
-			attroff(A_REVERSE); 
+			attroff(A_REVERSE);
 		}
 		curr = nextChoice(curr, vn->flags);
 	}
@@ -241,7 +287,9 @@ void chooseMenuCurses(VisualNovel* vn) {
 	Choice* last = getLastChoice(vn->currentScene->choices, vn->flags);
 
 	while (!chosen) {
-		if (vn->currentChoice == NULL) { break; }
+		if (vn->currentChoice == NULL) {
+			break;
+		}
 
 		Choice* next = nextChoice(vn->currentChoice, vn->flags);
 		Choice* prev = prevChoice(vn->currentChoice, vn->flags);
@@ -261,7 +309,8 @@ void chooseMenuCurses(VisualNovel* vn) {
 			case Prev:
 				vn->currentChoice = (prev == NULL) ? last : prev;
 				break;
-			case Auto: case Resize:
+			case Auto:
+			case Resize:
 				printDialogueCurses(vn, true, false);
 				break;
 			case Accept:
